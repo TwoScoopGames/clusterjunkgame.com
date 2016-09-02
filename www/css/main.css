@@ -1,11 +1,17 @@
 html {
   box-sizing: border-box;
   padding: 0 10px;
-  font-size: 15px !important;
+
 }
 *, *:before, *:after {
   box-sizing: inherit;
   //border: 1px solid red;
+}
+
+p{
+  font-size: 18px !important;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
 #canvas{
@@ -64,6 +70,75 @@ i{
 
 
 
+.well{
+  background-color: #009aab;
+
+  padding: 15px;
+  color: white;
+  margin: 5px;
+  font-size: 18px;
+
+  border-radius: 10px;
+  border: 8px solid #006874;
+}
+
+
+.woodgrain{
+  //  background-color: #6d5a39;
+  background: url("../images/wood-grain.png");
+  border: 8px solid black;
+  border-radius: 20px;
+  padding: 20px !important;
+}
+.woodgrain-inner{
+  background: #e5e19e;
+  border-radius: 10px;
+  padding: 15px;
+  color: black;
+  margin: 5px;
+  font-size: 18px;
+}
+
+.woodgrain-inner a{
+  color: black;
+  font-weight: bold;
+}
+
+
+
+
+.footer .woodgrain-inner{
+}
+
+.social-links a{
+  width: 60px !important;
+  height: 60px !important;
+  border-radius: 8px;
+  color: #3f311b;
+  font-size: 40px;
+  text-decoration: none;
+  border: 1px solid black;
+}
+
+.social-links a:hover{
+  background: #3f311b;
+  color: white;
+}
+
+@media (min-width: 600px) {
+  .coming-soon-message{
+    transform: rotate(8deg);
+    width: 344px;
+    position: absolute;
+    z-index: 1;
+    top: -56px;
+    right: -56px;
+  }
+  .coming-soon-message h2{
+    margin: 0;
+    line-height: 40px;
+  }
+}
 
 @media (max-width: 600px) {
   .hide-on-mobile {
