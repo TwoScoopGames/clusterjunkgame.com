@@ -1,10 +1,19 @@
+html {
+  box-sizing: border-box;
+  padding: 0 10px;
+  font-size: 15px !important;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
 
 #canvas{
   width: 100%;
   height: 100%;
-  position:absolute;
+  position:fixed;
   left:0;
   top:0;
+  bottom: 0;
   z-index:-1;
 }
 
@@ -15,18 +24,31 @@
 }
 
 .container.info{
-  max-width: 600px;
   background: white;
   border-radius: 25px;
   margin: 15px auto;
   padding: 20px;
-  border: 10px solid black;
+  border: 8px solid black;
+  position: relative;
+}
+
+.twitter-share-button{
+  position: absolute;
+  top: 5px;
+  right: 5px;
 }
 
 i{
   margin: 0 10px;
 }
 
+.gameplay-gif{
+  max-width: 100%;
+  border-radius: 10px;
+  border: 8px solid black;
+  margin: 5px
+
+}
 
 .credits{
   text-align: center;

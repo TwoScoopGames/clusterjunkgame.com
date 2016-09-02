@@ -52,25 +52,25 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	
+
 	var canvas = document.getElementById("canvas");
-	
+
 	var Splat = __webpack_require__(2);
 	__webpack_require__(64);
-	
-	
+
+
 	// This is some webpack magic to ensure the dynamically required scripts are loaded
-	
+
 	var splatSystemPath = "splat-ecs/lib/systems";
 	// WARNING: can't use splatSystemPath variable here, or webpack won't pick it up
 	var splatSystemRequire = __webpack_require__(65);
-	
+
 	var localSystemPath = "./systems";
 	var localSystemRequire = __webpack_require__(110);
-	
+
 	var localScriptPath = "./scripts";
 	var localScriptRequire = __webpack_require__(113);
-	
+
 	function generateManifest(files, folder) {
 	  return files.reduce(function(manifest, file) {
 	    var basename = file.substr(2);
@@ -78,21 +78,21 @@
 	    return manifest;
 	  }, {});
 	}
-	
+
 	__webpack_require__(116);
-	
+
 	var imageContext = __webpack_require__(117);
 	var imageManifest = generateManifest(imageContext.keys(), "images");
-	
+
 	var soundContext = __webpack_require__(119);
 	var soundManifest = generateManifest(soundContext.keys(), "sounds");
-	
+
 	var localDataPath = "./data";
 	var localDataRequire = __webpack_require__(121);
-	
+
 	var componentContext = __webpack_require__(130);
 	var componentManifest = generateComponentManifest(componentContext);
-	
+
 	function generateComponentManifest(context) {
 	  var files = context.keys();
 	  return files.reduce(function(manifest, file) {
@@ -101,11 +101,11 @@
 	    return manifest;
 	  }, {});
 	}
-	
+
 	function snakeToCamelCase(str) {
 	  return str.replace(/-([a-z])/g, function(g) { return g[1].toUpperCase(); });
 	}
-	
+
 	function basename(path) {
 	  var pos = path.lastIndexOf(".");
 	  if (pos !== -1) {
@@ -113,7 +113,7 @@
 	  }
 	  return path;
 	}
-	
+
 	function customRequire(path) {
 	  if (path.indexOf(splatSystemPath) === 0) {
 	    var splatName = "./" + path.substr(splatSystemPath.length + 1) + ".js";
@@ -143,7 +143,7 @@
 	  console.error("Unable to load module: \"", path, "\"");
 	  return undefined;
 	}
-	
+
 	window.game = new Splat.Game(canvas, customRequire);
 	window.game.start();
 
@@ -153,7 +153,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var buffer = __webpack_require__(3);
-	
+
 	/**
 	 * @namespace Splat
 	 */
@@ -161,7 +161,7 @@
 	  makeBuffer: buffer.makeBuffer,
 	  flipBufferHorizontally: buffer.flipBufferHorizontally,
 	  flipBufferVertically: buffer.flipBufferVertically,
-	
+
 	  ads: __webpack_require__(5),
 	  AStar: __webpack_require__(6),
 	  BinaryHeap: __webpack_require__(7),
@@ -183,9 +183,9 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/** @module splat-ecs/lib/buffer */
-	
+
 	var platform = __webpack_require__(4);
-	
+
 	/**
 	 * Make an invisible {@link canvas}.
 	 * @param {number} width The width of the canvas
@@ -203,7 +203,7 @@
 	  }
 	  return c;
 	}
-	
+
 	/**
 	 * Make an invisible canvas buffer, and draw on it.
 	 * @param {number} width The width of the buffer
@@ -221,7 +221,7 @@
 	  drawFun(ctx);
 	  return canvas;
 	}
-	
+
 	/**
 	 * Make a horizonally-flipped copy of a buffer or image.
 	 * @param {external:canvas|external:image} buffer The original image
@@ -233,7 +233,7 @@
 	    context.drawImage(buffer, -buffer.width, 0);
 	  });
 	}
-	
+
 	/**
 	 * Make a vertically-flipped copy of a buffer or image.
 	 * @param {external:canvas|external:image} buffer The original image
@@ -277,7 +277,7 @@
 	    context.drawImage(buffer, -h2, -w2);
 	  });
 	}
-	
+
 	module.exports = {
 	  makeBuffer: makeBuffer,
 	  flipBufferHorizontally: flipBufferHorizontally,
@@ -308,14 +308,14 @@
 	/**
 	 * @namespace Splat.ads
 	 */
-	
+
 	var platform = __webpack_require__(4);
-	
+
 	if (platform.isEjecta()) {
 	  var adBanner = new window.Ejecta.AdBanner();
-	
+
 	  var isLandscape = window.innerWidth > window.innerHeight;
-	
+
 	  var sizes = {
 	    "iPhone": {
 	      "portrait": {
@@ -338,10 +338,10 @@
 	      }
 	    }
 	  };
-	
+
 	  var device = window.navigator.userAgent.indexOf("iPad") >= 0 ? "iPad" : "iPhone";
 	  var size = sizes[device][isLandscape ? "landscape" : "portrait"];
-	
+
 	  module.exports = {
 	    /**
 	     * Show an advertisement.
@@ -385,7 +385,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var BinaryHeap = __webpack_require__(7);
-	
+
 	/**
 	 * Implements the [A* pathfinding algorithm]{@link http://en.wikipedia.org/wiki/A*_search_algorithm} on a 2-dimensional grid. You can use this to find a path between a source and destination coordinate while avoiding obstacles.
 	 * @constructor
@@ -426,7 +426,7 @@
 	AStar.prototype.makeNode = function(x, y, parent, g) {
 	  g += parent.g;
 	  var h = this.heuristic(x, y);
-	
+
 	  return {
 	    x: x,
 	    y: y,
@@ -448,20 +448,20 @@
 	  if (!node) {
 	    return false;
 	  }
-	
+
 	  var newG = parent.g + g;
-	
+
 	  if (newG >= node.g) {
 	    return true;
 	  }
-	
+
 	  node.parent = parent;
 	  node.g = newG;
 	  node.f = node.g + node.h;
-	
+
 	  var pos = this.openHeap.indexOf(node);
 	  this.openHeap.bubbleUp(pos);
-	
+
 	  return true;
 	};
 	/**
@@ -496,15 +496,15 @@
 	  this.tryNeighbor(parent.x - this.scaleX, parent.y - this.scaleY, parent, diagonalCost);
 	  this.tryNeighbor(parent.x, parent.y - this.scaleY, parent, straightCost);
 	  this.tryNeighbor(parent.x + this.scaleX, parent.y - this.scaleY, parent, diagonalCost);
-	
+
 	  this.tryNeighbor(parent.x - this.scaleX, parent.y, parent, straightCost);
 	  this.tryNeighbor(parent.x + this.scaleX, parent.y, parent, straightCost);
-	
+
 	  this.tryNeighbor(parent.x - this.scaleX, parent.y + this.scaleY, parent, diagonalCost);
 	  this.tryNeighbor(parent.x, parent.y + this.scaleY, parent, straightCost);
 	  this.tryNeighbor(parent.x + this.scaleX, parent.y + this.scaleY, parent, diagonalCost);
 	};
-	
+
 	function generatePath(node) {
 	  var path = [];
 	  while (node.parent) {
@@ -512,7 +512,7 @@
 	    var iy = node.y;
 	    while (ix !== node.parent.x || iy !== node.parent.y) {
 	      path.unshift({ x: ix, y: iy });
-	
+
 	      var dx = node.parent.x - ix;
 	      if (dx > 0) {
 	        ix++;
@@ -530,11 +530,11 @@
 	  }
 	  return path;
 	}
-	
+
 	function makeKey(x, y) {
 	  return x + "," + y;
 	}
-	
+
 	/**
 	 * Search for an optimal path between srcX, srcY and destX, destY, while avoiding obstacles.
 	 * @param {number} srcX The starting x coordinate
@@ -552,11 +552,11 @@
 	  srcY = scale(srcY, this.scaleY);
 	  this.destX = scale(destX, this.scaleX);
 	  this.destY = scale(destY, this.scaleY);
-	
+
 	  if (!this.isWalkable(this.destX, this.destY)) {
 	    return [];
 	  }
-	
+
 	  var srcKey = makeKey(srcX, srcY);
 	  var srcNode = {
 	    x: srcX,
@@ -572,7 +572,7 @@
 	  });
 	  this.openHeap.insert(srcNode);
 	  this.closedNodes = {};
-	
+
 	  var node = this.openHeap.deleteRoot();
 	  while (node) {
 	    var key = makeKey(node.x, node.y);
@@ -586,7 +586,7 @@
 	  }
 	  return [];
 	};
-	
+
 	module.exports = AStar;
 
 
@@ -647,7 +647,7 @@
 	  if (pos === 0) {
 	    return;
 	  }
-	
+
 	  var data = this.array[pos];
 	  var parentIndex = this.parentIndex(pos);
 	  var parent = this.array[parentIndex];
@@ -718,7 +718,7 @@
 	  }
 	  return -1;
 	};
-	
+
 	module.exports = BinaryHeap;
 
 
@@ -733,7 +733,7 @@
 	var Scene = __webpack_require__(23);
 	var SoundManager = __webpack_require__(52);
 	var splitFilmStripAnimations = __webpack_require__(54);
-	
+
 	function Game(canvas, customRequire) {
 	  this.animations = customRequire("./data/animations");
 	  splitFilmStripAnimations(this.animations);
@@ -746,10 +746,10 @@
 	  this.prefabs = new Prefabs(customRequire("./data/prefabs"));
 	  this.lastTime = -1;
 	  this.remainingDebugTime = undefined;
-	
+
 	  this.scaleCanvasToCssSize();
 	  window.addEventListener("resize", this.onCanvasResize.bind(this));
-	
+
 	  this.scenes = this.makeScenes(customRequire("./data/scenes"));
 	  this.run = this.run.bind(this);
 	}
@@ -790,13 +790,13 @@
 	};
 	Game.prototype.run = function(time) {
 	  var scenes = Object.keys(this.scenes);
-	
+
 	  if (this.lastTime === -1) {
 	    this.lastTime = time;
 	  }
 	  var elapsed = time - this.lastTime;
 	  this.lastTime = time;
-	
+
 	  for (var i = 0; i < scenes.length; i++) {
 	    var name = scenes[i];
 	    var scene = this.scenes[name];
@@ -809,7 +809,7 @@
 	    scene.render(elapsed);
 	    this.context.restore();
 	  }
-	
+
 	  if (this.remainingDebugTime !== undefined) {
 	    this.remainingDebugTime -= elapsed;
 	    if (this.remainingDebugTime <= 0) {
@@ -817,7 +817,7 @@
 	      this.logDebugTimes();
 	    }
 	  }
-	
+
 	  if (this.running) {
 	    window.requestAnimationFrame(this.run);
 	  }
@@ -875,7 +875,7 @@
 	    var cssWidth = parseInt(canvasStyle.width);
 	    var cssHeight = parseInt(canvasStyle.height);
 	    var cssAspectRatio = cssWidth / cssHeight;
-	
+
 	    var desiredWidth = width;
 	    var desiredHeight = height;
 	    var desiredAspectRatio = width / height;
@@ -884,13 +884,13 @@
 	    } else if (desiredAspectRatio < cssAspectRatio) {
 	      desiredWidth = Math.floor(height * cssAspectRatio);
 	    }
-	
+
 	    this.canvas.width = desiredWidth;
 	    this.canvas.height = desiredHeight;
 	  }.bind(this);
 	  this.resizer();
 	};
-	
+
 	module.exports = Game;
 
 
@@ -899,7 +899,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var loadAssets = __webpack_require__(10);
-	
+
 	/**
 	 * Loads external assets, lets you track their progress, and lets you access the loaded data.
 	 * @constructor
@@ -936,7 +936,7 @@
 	  }
 	  return asset.data;
 	};
-	
+
 	module.exports = AssetLoader;
 
 
@@ -945,10 +945,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var once = __webpack_require__(11);
-	
+
 	module.exports = function(manifest, loader, callback) {
 	  callback = once(callback);
-	
+
 	  var finished = 0;
 	  var keys = Object.keys(manifest);
 	  return keys.reduce(function(assets, key) {
@@ -988,13 +988,13 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var loadAsset = __webpack_require__(13);
-	
+
 	function blobToImage(blob) {
 	  var image = new Image();
 	  image.src = window.URL.createObjectURL(blob);
 	  return image;
 	}
-	
+
 	module.exports = function(url, callback) {
 	  return loadAsset(url, "blob", function(err, asset) {
 	    if (err) {
@@ -1012,7 +1012,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var once = __webpack_require__(11);
-	
+
 	module.exports = function(url, responseType, callback) {
 	  callback = once(callback);
 	  var asset = {
@@ -1020,7 +1020,7 @@
 	    total: 1,
 	    data: undefined
 	  };
-	
+
 	  var request = new XMLHttpRequest();
 	  request.open("GET", url, true);
 	  request.responseType = responseType;
@@ -1061,7 +1061,7 @@
 	var keyMap = __webpack_require__(18).US;
 	var keyboard = new Keyboard(keyMap);
 	var Mouse = __webpack_require__(19);
-	
+
 	function Input(config, canvas) {
 	  this.config = config;
 	  this.gamepad = new Gamepad();
@@ -1169,7 +1169,7 @@
 	    delete this.delayedButtonUpdates[name];
 	  }.bind(this));
 	};
-	
+
 	module.exports = Input;
 
 
@@ -1178,13 +1178,13 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var mappings = __webpack_require__(16);
-	
+
 	function getMapping(gamepadId, userAgent) {
 	  return mappings.filter(function(mapping) {
 	    return gamepadId.indexOf(mapping.id) !== -1 && userAgent.indexOf(mapping.userAgent) !== -1;
 	  })[0] || mappings[0];
 	}
-	
+
 	function transformButton(mapping, gp, button, i) {
 	  var mb = mapping.buttons[i] || { name: "button " + i };
 	  gp.buttons[mb.name] = button.pressed;
@@ -1197,7 +1197,7 @@
 	  }
 	  return gp;
 	}
-	
+
 	function scaleAxis(axis, scale) {
 	  if (scale === "to positive") {
 	    return (axis + 1.0) / 2.0;
@@ -1207,7 +1207,7 @@
 	  }
 	  return axis;
 	}
-	
+
 	function transformAxis(mapping, threshold, gp, axis, i) {
 	  var ma = mapping.axes[i] || { name: "axis " + i };
 	  gp.axes[ma.name] = scaleAxis(axis, ma.scale);
@@ -1221,7 +1221,7 @@
 	  }
 	  return gp;
 	}
-	
+
 	function transformGamepad(threshold, gamepad) {
 	  var gp = {
 	    id: gamepad.id,
@@ -1233,11 +1233,11 @@
 	  gp = gamepad.axes.reduce(transformAxis.bind(undefined, mapping, threshold), gp);
 	  return gp;
 	}
-	
+
 	function isDefined(val) {
 	  return val !== undefined;
 	}
-	
+
 	function Gamepad() {
 	  this.threshold = 0.05;
 	  this.gamepads = [];
@@ -1274,7 +1274,7 @@
 	  }
 	  return this.gamepads[gamepad].id;
 	};
-	
+
 	module.exports = Gamepad;
 
 
@@ -1961,7 +1961,7 @@
 /***/ function(module, exports) {
 
 	"use strict";
-	
+
 	/**
 	 * Keyboard input handling.
 	 * @constructor
@@ -1974,7 +1974,7 @@
 		 * @private
 		 */
 		this.keys = {};
-	
+
 		var self = this;
 		for (var kc in keyMap) {
 			if (keyMap.hasOwnProperty(kc)) {
@@ -2017,7 +2017,7 @@
 		}
 		return p;
 	};
-	
+
 	module.exports = Keyboard;
 
 
@@ -2139,35 +2139,29 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var platform = __webpack_require__(4);
-	
-	// prevent springy scrolling on ios
-	document.ontouchmove = function(e) {
-	  e.preventDefault();
-	};
-	
-	// prevent right-click on desktop
-	window.oncontextmenu = function() {
-	  return false;
-	};
-	
+
+
+
+
+
 	var relMouseCoords = function(canvas, event) {
 	  var x = event.pageX - canvas.offsetLeft + document.body.scrollLeft;
 	  var y = event.pageY - canvas.offsetTop + document.body.scrollTop;
-	
+
 	  // scale based on ratio of canvas internal dimentions to css dimensions
 	  var style = window.getComputedStyle(canvas);
 	  var cw = parseInt(style.width);
 	  var ch = parseInt(style.height);
-	
+
 	  x *= canvas.width / cw;
 	  y *= canvas.height / ch;
-	
+
 	  return {
 	    x: Math.floor(x),
 	    y: Math.floor(y)
 	  };
 	};
-	
+
 	function relMouseCoordsEjecta(canvas, event) {
 	  var ratioX = canvas.width / window.innerWidth;
 	  var ratioY = canvas.height / window.innerHeight;
@@ -2175,11 +2169,11 @@
 	  var y = event.pageY * ratioY;
 	  return { x: x, y: y };
 	}
-	
+
 	if (platform.isEjecta()) {
 	  relMouseCoords = relMouseCoordsEjecta;
 	}
-	
+
 	/**
 	 * Mouse and touch input handling. An instance of Mouse is available as {@link Splat.Game#mouse}.
 	 *
@@ -2209,13 +2203,13 @@
 	   * @private
 	   */
 	  this.buttons = [false, false, false];
-	
+
 	  /**
 	   * An array of the current touches on a touch screen device. Each touch has a `x`, `y`, and `id` field.
 	   * @member {Array}
 	   */
 	  this.touches = [];
-	
+
 	  /**
 	   * A function that is called when a mouse button or touch is released.
 	   * @callback onmouseupHandler
@@ -2228,7 +2222,7 @@
 	   * @member {onmouseupHandler}
 	   */
 	  this.onmouseup = undefined;
-	
+
 	  var self = this;
 	  canvas.addEventListener("mousedown", function(event) {
 	    var m = relMouseCoords(canvas, event);
@@ -2253,7 +2247,7 @@
 	    self.y = m.y;
 	    updateTouchFromMouse();
 	  });
-	
+
 	  function updateTouchFromMouse() {
 	    if (self.supportsTouch()) {
 	      return;
@@ -2352,7 +2346,7 @@
 	Mouse.prototype.isPressed = function(button) {
 	  return this.buttons[button];
 	};
-	
+
 	module.exports = Mouse;
 
 
@@ -2362,7 +2356,7 @@
 
 	var clone = __webpack_require__(21);
 	var setOrAddComponent = __webpack_require__(22);
-	
+
 	function Prefabs(prefabs) {
 	  this.prefabs = prefabs;
 	}
@@ -2385,7 +2379,7 @@
 	    this.registerPrefab(key, prefabs[key]);
 	  }.bind(this));
 	};
-	
+
 	module.exports = Prefabs;
 
 
@@ -2426,7 +2420,7 @@
 	var ECS = __webpack_require__(46).EntityComponentSystem;
 	var EntityPool = __webpack_require__(46).EntityPool;
 	var registerComponents = __webpack_require__(51);
-	
+
 	function Scene(name, globals) {
 	  this.data = {};
 	  this.entities = new EntityPool();
@@ -2439,10 +2433,10 @@
 	  this.speed = 1.0;
 	  this.simulation = new ECS();
 	  this.simulationStepTime = 5;
-	
+
 	  this.firstTime = true;
 	  this.accumTime = 0;
-	
+
 	  var sceneData = globals.require("./data/scenes")[name];
 	  if (typeof sceneData.onEnter === "string") {
 	    this.onEnter = globals.require(sceneData.onEnter);
@@ -2462,7 +2456,7 @@
 	  this.entities = new EntityPool();
 	  this.firstTime = true;
 	  this.accumTime = 0;
-	
+
 	  this.data = {
 	    animations: this.globals.animations,
 	    arguments: this.tempArguments || {},
@@ -2479,22 +2473,22 @@
 	    sounds: this.globals.sounds,
 	    switchScene: this.switchScene.bind(this)
 	  };
-	
+
 	  this.simulation = new ECS();
 	  this.renderer = new ECS();
 	  this.simulation.add(function processInputUpdates() {
 	    this.globals.inputs.processUpdates();
 	  }.bind(this));
-	
+
 	  var systems = this.globals.require("./data/systems");
 	  this.installSystems(systems.simulation, this.simulation, this.data);
 	  this.installSystems(systems.renderer, this.renderer, this.data);
-	
+
 	  registerComponents(this.entities, components);
 	  registerComponents(this.entities, this.globals.require("./data/components"));
 	  var entities = this.globals.require("./data/entities");
 	  this.entities.load(clone(entities[this.name]) || []);
-	
+
 	  this.onEnter(this.data);
 	};
 	Scene.prototype.stop = function() {
@@ -2511,7 +2505,7 @@
 	Scene.prototype.installSystems = function(systems, ecs, data) {
 	  for (var i = 0; i < systems.length; i++) {
 	    var system = systems[i];
-	
+
 	    if (system.scenes.indexOf(this.name) === -1 && system.scenes !== "all") {
 	      continue;
 	    }
@@ -2530,15 +2524,15 @@
 	    this._initialize();
 	    this.state = "started";
 	  }
-	
+
 	  if (this.firstTime) {
 	    this.firstTime = false;
 	    // run simulation the first time, because not enough time will have elapsed
 	    this.simulation.run(this.entities, 0);
 	  }
-	
+
 	  elapsed *= this.speed;
-	
+
 	  this.accumTime += elapsed;
 	  while (this.accumTime >= this.simulationStepTime) {
 	    this.accumTime -= this.simulationStepTime;
@@ -2551,7 +2545,7 @@
 	  }
 	  this.renderer.run(this.entities, elapsed);
 	};
-	
+
 	module.exports = Scene;
 
 
@@ -2563,7 +2557,7 @@
 	 * The components used by {@link Systems} provided by Splat ECS.
 	 * @namespace Components
 	 */
-	
+
 	module.exports = {
 	  acceleration: __webpack_require__(25),
 	  animation: __webpack_require__(26),
@@ -2830,7 +2824,7 @@
 	 * @property {int} x - The id of the entity to align to on the x axis.
 	 * @property {int} y - The id of the entity to align to on the y axis.
 	 */
-	
+
 	module.exports = {
 	  factory: function() {
 	    return {};
@@ -2916,7 +2910,7 @@
 	 * @property {float} z - The position of this entity along the z-axis.
 	 * Since Splat is 2D this is mainly for creating layers when drawing sprites similar to z-index in CSS.
 	 */
-	
+
 	module.exports = {
 	  factory: function() {
 	    return {
@@ -2984,7 +2978,7 @@
 	 * @property {float} width - The width of this entity rightward from {@link Components.position} along the x-axis.
 	 * @property {float} height - The height of this entity downward from {@link Components.position} along the y-axis.
 	 */
-	
+
 	module.exports = {
 	  factory: function() {
 	    return {
@@ -3018,7 +3012,7 @@
 	 * @property {string} script - The <code>require</code> path to a script to run when the timer is reset. The path is relative to your game's <code>src</code> folder. For example <code>./scripts/next-scene</code> might execute the code in <code>/src/scripts/next-scene.js</code>.
 	 * @property {float} time - The amount of time, in milliseconds, the timer has accumulated.
 	 */
-	
+
 	module.exports = {
 	  factory: function() {
 	    return {};
@@ -3043,7 +3037,7 @@
 	 * @property {float} x - The velocity of this entity along the x-axis.
 	 * @property {float} y - The velocity of this entity along the y-axis.
 	 */
-	
+
 	module.exports = {
 	  factory: function() {
 	    return {
@@ -3073,7 +3067,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var present = __webpack_require__(48);
-	
+
 	function EntityComponentSystem() {
 	  this.systems = [];
 	  this.systemNames = [];
@@ -3120,7 +3114,7 @@
 	    return 0;
 	  });
 	};
-	
+
 	module.exports = EntityComponentSystem;
 
 
@@ -3129,7 +3123,7 @@
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {var performance = global.performance || {};
-	
+
 	var present = (function () {
 	  var names = ['now', 'webkitNow', 'msNow', 'mozNow', 'oNow'];
 	  while (names.length) {
@@ -3138,14 +3132,14 @@
 	      return performance[name].bind(performance);
 	    }
 	  }
-	
+
 	  var dateNow = Date.now || function () { return new Date().getTime(); };
 	  var navigationStart = (performance.timing || {}).navigationStart || dateNow();
 	  return function () {
 	    return dateNow() - navigationStart;
 	  };
 	}());
-	
+
 	present.performanceNow = performance.now;
 	present.noConflict = function () {
 	  performance.now = present.performanceNow;
@@ -3154,9 +3148,9 @@
 	  performance.now = present;
 	};
 	present.conflict();
-	
+
 	module.exports = present;
-	
+
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
@@ -3164,7 +3158,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var ObjectPool = __webpack_require__(50);
-	
+
 	function EntityPool() {
 	  this.entities = {};
 	  this.nextId = 0;
@@ -3213,13 +3207,13 @@
 	  if (oldValue === undefined) {
 	    return;
 	  }
-	
+
 	  if (!isPrimitive(oldValue)) {
 	    this.resetComponent(id, component);
 	    this.componentPools[component].free(oldValue);
 	  }
 	  delete this.entities[id][component];
-	
+
 	  for (var i = 0; i < this.componentToSearches[component].length; i++) {
 	    var search = this.componentToSearches[component][i];
 	    removeFromArray(this.searchResults[search], id);
@@ -3234,16 +3228,16 @@
 	      "EntityPool.prototype.registerComponent(component, factory[, reset][, size])."
 	    );
 	  }
-	
+
 	  var predefinedValue = this.entities[id][component];
 	  if (predefinedValue && !isPrimitive(predefinedValue)) {
 	    this.resetComponent(id, component);
 	    return predefinedValue;
 	  }
-	
+
 	  var value = this.componentPools[component].alloc();
 	  this.setComponentValue(id, component, value);
-	
+
 	  return value;
 	};
 	EntityPool.prototype.setComponent = function(id, component, value) {
@@ -3256,7 +3250,7 @@
 	      "the result it returns."
 	    );
 	  }
-	
+
 	  if (!isPrimitive(this.entities[id][component])) {
 	    throw new Error(
 	      "You can't set a non-primitive type component \"" + component + "\" to a primitive value. " +
@@ -3264,7 +3258,7 @@
 	      "EntityPool.prototype.removeComponent(id, component)."
 	    );
 	  }
-	
+
 	  if (typeof value === "undefined") {
 	    this.removeComponent(id, component);
 	  } else {
@@ -3277,7 +3271,7 @@
 	  if (typeof existingValue !== "undefined" && existingValue === value) {
 	    return;
 	  }
-	
+
 	  this.entities[id][component] = value;
 	  if (typeof existingValue === "undefined") {
 	    if (this.searchToComponents[component] === undefined) {
@@ -3319,7 +3313,7 @@
 	    this.fireCallback.apply(this, queue[i]);
 	  }
 	};
-	
+
 	EntityPool.prototype.onAddComponent = function(component, callback) {
 	  this.addCallback("add", component, callback);
 	};
@@ -3334,9 +3328,9 @@
 	  if (this.searchToComponents[search] !== undefined) {
 	    throw "the search \"" + search + "\" was already registered";
 	  }
-	
+
 	  this.searchToComponents[search] = components.slice(0);
-	
+
 	  for (var i = 0; i < components.length; i++) {
 	    var c = components[i];
 	    if (this.componentToSearches[c] === undefined) {
@@ -3345,7 +3339,7 @@
 	      this.componentToSearches[c].push(search);
 	    }
 	  }
-	
+
 	  this.searchResults[search] = [];
 	};
 	EntityPool.prototype.registerSearch = function(search, components) {
@@ -3354,7 +3348,7 @@
 	    .filter(objectHasProperties.bind(undefined, components))
 	    .map(entityId);
 	};
-	
+
 	EntityPool.prototype.load = function(entities) {
 	  this.callbackQueue = [];
 	  entities.forEach(function(entity) {
@@ -3382,11 +3376,11 @@
 	  }.bind(this));
 	  this.fireQueuedCallbacks();
 	};
-	
+
 	EntityPool.prototype.save = function() {
 	  return objectValues(this.entities);
 	};
-	
+
 	function removeFromArray(array, item) {
 	  var i = array.indexOf(item);
 	  if (i !== -1) {
@@ -3394,20 +3388,20 @@
 	  }
 	  return array;
 	}
-	
+
 	function entityId(entity) {
 	  return entity.id;
 	}
 	function objectHasProperties(properties, obj) {
 	  return properties.every(Object.prototype.hasOwnProperty.bind(obj));
 	}
-	
+
 	function objectValues(obj) {
 	  return Object.keys(obj).map(function(key) {
 	    return obj[key];
 	  });
 	}
-	
+
 	/* returns true if the value is a primitive
 	 * type a.k.a. null, undefined, boolean,
 	 * number, string, or symbol.
@@ -3415,7 +3409,7 @@
 	function isPrimitive(value) {
 	  return typeof value !== "object" || value === null;
 	}
-	
+
 	module.exports = EntityPool;
 
 
@@ -3433,7 +3427,7 @@
 	  this.factory = factory;
 	  this.size = size || 1;
 	  this.dead = [];
-	
+
 	  for (var i = 0; i < size; i++) {
 	    this.dead.push(factory());
 	  }
@@ -3460,7 +3454,7 @@
 	ObjectPool.prototype.free = function(obj) {
 	  this.dead.push(obj);
 	};
-	
+
 	module.exports = ObjectPool;
 
 
@@ -3484,9 +3478,9 @@
 
 	var AssetLoader = __webpack_require__(9);
 	var loadSound = __webpack_require__(53);
-	
+
 	window.AudioContext = window.AudioContext || window.webkitAudioContext;
-	
+
 	/**
 	 * Plays audio, tracks looping sounds, and manages volume.
 	 * This implementation uses the Web Audio API.
@@ -3506,14 +3500,14 @@
 	   * @private
 	   */
 	  this.looping = {};
-	
+
 	  /**
 	   * The Web Audio API AudioContext
 	   * @member {external:AudioContext}
 	   * @private
 	   */
 	  this.context = new window.AudioContext();
-	
+
 	  this.gainNode = this.context.createGain();
 	  this.gainNode.connect(this.context.destination);
 	  this.volume = this.gainNode.gain.value;
@@ -3527,12 +3521,12 @@
 	    window.removeEventListener("click", firstTouchHandler);
 	    window.removeEventListener("keydown", firstTouchHandler);
 	    window.removeEventListener("touchstart", firstTouchHandler);
-	
+
 	    var source = this.context.createOscillator();
 	    source.connect(this.gainNode);
 	    source.start(0);
 	    source.stop(0);
-	
+
 	    if (this.firstPlay) {
 	      this.play(this.firstPlay, this.firstPlayLoop);
 	    } else {
@@ -3614,8 +3608,8 @@
 	SoundManager.prototype.isMuted = function() {
 	  return this.muted;
 	};
-	
-	
+
+
 	function FakeSoundManager() {}
 	FakeSoundManager.prototype.play = function() {};
 	FakeSoundManager.prototype.stop = function() {};
@@ -3625,7 +3619,7 @@
 	FakeSoundManager.prototype.isMuted = function() {
 	  return true;
 	};
-	
+
 	if (window.AudioContext) {
 	  module.exports = SoundManager;
 	} else {
@@ -3639,7 +3633,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var loadAsset = __webpack_require__(13);
-	
+
 	module.exports = function(audioContext, url, callback) {
 	  return loadAsset(url, "arraybuffer", function(err, asset) {
 	    if (err) {
@@ -3660,7 +3654,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var clone = __webpack_require__(21);
-	
+
 	module.exports = function splitFilmStripAnimations(animations) {
 	  Object.keys(animations).forEach(function(key) {
 	    var firstFrame = animations[key][0];
@@ -3669,7 +3663,7 @@
 	    }
 	  });
 	};
-	
+
 	function splitFilmStripAnimation(animations, key) {
 	  var firstFrame = animations[key][0];
 	  if (firstFrame.properties.image.sourceWidth % firstFrame.filmstripFrames != 0) {
@@ -3691,10 +3685,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var platform = __webpack_require__(4);
-	
+
 	if (platform.isEjecta()) {
 	  var iap = new window.Ejecta.IAPManager();
-	
+
 	  module.exports = {
 	    "get": function(sku, callback) {
 	      iap.getProducts([sku], function(err, products) {
@@ -3787,13 +3781,13 @@
 	/**
 	 * @namespace Splat.leaderboards
 	 */
-	
+
 	var platform = __webpack_require__(4);
-	
+
 	if (platform.isEjecta()) {
 	  var gameCenter = new window.Ejecta.GameCenter();
 	  gameCenter.softAuthenticate();
-	
+
 	  var authFirst = function(action) {
 	    if (gameCenter.authed) {
 	      action();
@@ -3806,7 +3800,7 @@
 	      });
 	    }
 	  };
-	
+
 	  module.exports = {
 	    /**
 	     * Report that an achievement was achieved.
@@ -3858,7 +3852,7 @@
 	    "showLeaderboard": function() {}
 	  };
 	}
-	
+
 
 
 /***/ },
@@ -3881,7 +3875,7 @@
 	function oscillate(current, period) {
 	  return Math.sin(current / period * Math.PI);
 	}
-	
+
 	/**
 	 * @namespace Splat.math
 	 */
@@ -3909,50 +3903,50 @@
 	  https://github.com/banksean wrapped Makoto Matsumoto and Takuji Nishimura's code in a namespace
 	  so it's better encapsulated. Now you can have multiple random number generators
 	  and they won't stomp all over eachother's state.
-	
+
 	  If you want to use this as a substitute for Math.random(), use the random()
 	  method like so:
-	
+
 	  var m = new MersenneTwister();
 	  var randomNumber = m.random();
-	
+
 	  You can also call the other genrand_{foo}() methods on the instance.
-	
+
 	  If you want to use a specific seed in order to get a repeatable random
 	  sequence, pass an integer into the constructor:
-	
+
 	  var m = new MersenneTwister(123);
-	
+
 	  and that will always produce the same random sequence.
-	
+
 	  Sean McCullough (banksean@gmail.com)
 	*/
-	
+
 	/*
 	   A C-program for MT19937, with initialization improved 2002/1/26.
 	   Coded by Takuji Nishimura and Makoto Matsumoto.
-	
+
 	   Before using, initialize the state by using init_seed(seed)
 	   or init_by_array(init_key, key_length).
-	
+
 	   Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura,
 	   All rights reserved.
-	
+
 	   Redistribution and use in source and binary forms, with or without
 	   modification, are permitted provided that the following conditions
 	   are met:
-	
+
 	     1. Redistributions of source code must retain the above copyright
 	        notice, this list of conditions and the following disclaimer.
-	
+
 	     2. Redistributions in binary form must reproduce the above copyright
 	        notice, this list of conditions and the following disclaimer in the
 	        documentation and/or other materials provided with the distribution.
-	
+
 	     3. The names of its contributors may not be used to endorse or promote
 	        products derived from this software without specific prior written
 	        permission.
-	
+
 	   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 	   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 	   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -3964,28 +3958,28 @@
 	   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 	   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-	
-	
+
+
 	   Any feedback is very welcome.
 	   http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html
 	   email: m-mat @ math.sci.hiroshima-u.ac.jp (remove space)
 	*/
-	
+
 	var MersenneTwister = function(seed) {
 		if (seed == undefined) {
 			seed = new Date().getTime();
 		}
-	
+
 		/* Period parameters */
 		this.N = 624;
 		this.M = 397;
 		this.MATRIX_A = 0x9908b0df;   /* constant vector a */
 		this.UPPER_MASK = 0x80000000; /* most significant w-r bits */
 		this.LOWER_MASK = 0x7fffffff; /* least significant r bits */
-	
+
 		this.mt = new Array(this.N); /* the array for the state vector */
 		this.mti=this.N+1; /* mti==N+1 means mt[N] is not initialized */
-	
+
 		if (seed.constructor == Array) {
 			this.init_by_array(seed, seed.length);
 		}
@@ -3993,7 +3987,7 @@
 			this.init_seed(seed);
 		}
 	}
-	
+
 	/* initializes mt[N] with a seed */
 	/* origin name init_genrand */
 	MersenneTwister.prototype.init_seed = function(s) {
@@ -4010,7 +4004,7 @@
 			/* for >32 bit machines */
 		}
 	}
-	
+
 	/* initialize by an array with array-length */
 	/* init_key is the array for initializing keys */
 	/* key_length is its length */
@@ -4037,23 +4031,23 @@
 			i++;
 			if (i>=this.N) { this.mt[0] = this.mt[this.N-1]; i=1; }
 		}
-	
+
 		this.mt[0] = 0x80000000; /* MSB is 1; assuring non-zero initial array */
 	}
-	
+
 	/* generates a random number on [0,0xffffffff]-interval */
 	/* origin name genrand_int32 */
 	MersenneTwister.prototype.random_int = function() {
 		var y;
 		var mag01 = new Array(0x0, this.MATRIX_A);
 		/* mag01[x] = x * MATRIX_A  for x=0,1 */
-	
+
 		if (this.mti >= this.N) { /* generate N words at one time */
 			var kk;
-	
+
 			if (this.mti == this.N+1)  /* if init_seed() has not been called, */
 				this.init_seed(5489);  /* a default initial seed is used */
-	
+
 			for (kk=0;kk<this.N-this.M;kk++) {
 				y = (this.mt[kk]&this.UPPER_MASK)|(this.mt[kk+1]&this.LOWER_MASK);
 				this.mt[kk] = this.mt[kk+this.M] ^ (y >>> 1) ^ mag01[y & 0x1];
@@ -4064,56 +4058,56 @@
 			}
 			y = (this.mt[this.N-1]&this.UPPER_MASK)|(this.mt[0]&this.LOWER_MASK);
 			this.mt[this.N-1] = this.mt[this.M-1] ^ (y >>> 1) ^ mag01[y & 0x1];
-	
+
 			this.mti = 0;
 		}
-	
+
 		y = this.mt[this.mti++];
-	
+
 		/* Tempering */
 		y ^= (y >>> 11);
 		y ^= (y << 7) & 0x9d2c5680;
 		y ^= (y << 15) & 0xefc60000;
 		y ^= (y >>> 18);
-	
+
 		return y >>> 0;
 	}
-	
+
 	/* generates a random number on [0,0x7fffffff]-interval */
 	/* origin name genrand_int31 */
 	MersenneTwister.prototype.random_int31 = function() {
 		return (this.random_int()>>>1);
 	}
-	
+
 	/* generates a random number on [0,1]-real-interval */
 	/* origin name genrand_real1 */
 	MersenneTwister.prototype.random_incl = function() {
 		return this.random_int()*(1.0/4294967295.0);
 		/* divided by 2^32-1 */
 	}
-	
+
 	/* generates a random number on [0,1)-real-interval */
 	MersenneTwister.prototype.random = function() {
 		return this.random_int()*(1.0/4294967296.0);
 		/* divided by 2^32 */
 	}
-	
+
 	/* generates a random number on (0,1)-real-interval */
 	/* origin name genrand_real3 */
 	MersenneTwister.prototype.random_excl = function() {
 		return (this.random_int() + 0.5)*(1.0/4294967296.0);
 		/* divided by 2^32 */
 	}
-	
+
 	/* generates a random number on [0,1) with 53-bit resolution*/
 	/* origin name genrand_res53 */
 	MersenneTwister.prototype.random_long = function() {
 		var a=this.random_int()>>>5, b=this.random_int()>>>6;
 		return(a*67108864.0+b)*(1.0/9007199254740992.0);
 	}
-	
+
 	/* These real versions are due to Isaku Wada, 2002/01/09 added */
-	
+
 	module.exports = MersenneTwister;
 
 
@@ -4122,7 +4116,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var platform = __webpack_require__(4);
-	
+
 	/**
 	 * Open a url in a new window.
 	 * @alias Splat.openUrl
@@ -4131,7 +4125,7 @@
 	module.exports = function(url) {
 	  window.open(url);
 	};
-	
+
 	if (platform.isEjecta()) {
 	  module.exports = function(url) {
 	    window.ejecta.openURL(url);
@@ -4144,7 +4138,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var buffer = __webpack_require__(3);
-	
+
 	function getContextForImage(image) {
 	  var ctx;
 	  buffer.makeBuffer(image.width, image.height, function(context) {
@@ -4153,7 +4147,7 @@
 	  });
 	  return ctx;
 	}
-	
+
 	/**
 	 * A stretchable image that has borders.
 	 * Similar to the [Android NinePatch]{@link https://developer.android.com/guide/topics/graphics/2d-graphics.html#nine-patch}, but it only has the lines on the bottom and right edges to denote the stretchable area.
@@ -4166,7 +4160,7 @@
 	  this.img = image;
 	  var imgw = image.width - 1;
 	  var imgh = image.height - 1;
-	
+
 	  var context = getContextForImage(image);
 	  var firstDiv = imgw;
 	  var secondDiv = imgw;
@@ -4186,7 +4180,7 @@
 	  this.w1 = firstDiv;
 	  this.w2 = secondDiv - firstDiv;
 	  this.w3 = imgw - secondDiv;
-	
+
 	  firstDiv = secondDiv = imgh;
 	  for (var y = 0; y < imgh; y++) {
 	    pixel = context.getImageData(imgw, y, 1, 1).data;
@@ -4217,7 +4211,7 @@
 	  width = Math.floor(width);
 	  height = Math.floor(height);
 	  var cx, cy, w, h;
-	
+
 	  for (cy = y + this.h1; cy < y + height - this.h3; cy += this.h2) {
 	    for (cx = x + this.w1; cx < x + width - this.w3; cx += this.w2) {
 	      w = Math.min(this.w2, x + width - this.w3 - cx);
@@ -4256,7 +4250,7 @@
 	    context.drawImage(this.img, this.w1 + this.w2, this.h1 + this.h2, this.w3, this.h3, x + width - this.w3, y + height - this.h3, this.w3, this.h3);
 	  }
 	};
-	
+
 	module.exports = NinePatch;
 
 
@@ -4265,9 +4259,9 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/** @module splat-ecs/lib/particles */
-	
+
 	var random = __webpack_require__(62);
-	
+
 	module.exports = {
 	  /**
 	  * Create between {@link module:splat-ecs/lib/particles.Config#qtyMin qtyMin} and {@link module:splat-ecs/lib/particles.Config#qtyMax qtyMax} particles, and randomize their properties according to <code>config</code>.
@@ -4283,20 +4277,20 @@
 	      if (typeof config.origin === "number") {
 	        origin = choosePointInEntity(game, origin);
 	      }
-	
+
 	      var randomSize = random.inRange(config.sizeMin, config.sizeMax);
 	      scaleEntityRect(game, particle, randomSize);
-	
+
 	      centerEntityOnPoint(game, particle, origin);
-	
+
 	      var velocity = random.inRange(config.velocityMin, config.velocityMax);
-	
+
 	      var angle = pickAngle(config, i, particleCount);
 	      var velocityComponent = game.entities.addComponent(particle, "velocity");
 	      var direction = pointOnCircle(angle, velocity);
 	      velocityComponent.x = direction.x;
 	      velocityComponent.y = direction.y;
-	
+
 	      if (config.accelerationX || config.accelerationY) {
 	        var accel = game.entities.addComponent(particle, "acceleration");
 	        accel.x = config.accelerationX;
@@ -4306,7 +4300,7 @@
 	      lifeSpan.max = random.inRange(config.lifeSpanMin, config.lifeSpanMax);
 	    }
 	  },
-	
+
 	  /**
 	   * The settings for a type of particle.
 	   * @constructor
@@ -4411,7 +4405,7 @@
 	    this.lifeSpanMax = 500;
 	  }
 	};
-	
+
 	function pickAngle(config, particleNumber, particleCount) {
 	  var startAngle = config.angle - (config.arcWidth / 2);
 	  if (config.spreadType === "even") {
@@ -4421,20 +4415,20 @@
 	    return random.inRange(startAngle, endAngle);
 	  }
 	}
-	
+
 	function scaleEntityRect(game, entity, scaleFactor) {
 	  var size = game.entities.getComponent(entity, "size");
 	  size.width = size.width * scaleFactor;
 	  size.height = size.height * scaleFactor;
 	}
-	
+
 	function pointOnCircle(angle, radius) {
 	  return {
 	    "x": (radius * Math.cos(angle)),
 	    "y": (radius * Math.sin(angle))
 	  };
 	}
-	
+
 	/**
 	 * Center an entity on a given point.
 	 * @private
@@ -4448,7 +4442,7 @@
 	  position.x = point.x - (size.width / 2);
 	  position.y = point.y - (size.height / 2);
 	}
-	
+
 	/**
 	 * Choose a random point inside the bounding rectangle of an entity.
 	 * @private
@@ -4477,7 +4471,7 @@
 /***/ function(module, exports) {
 
 	/** @module splat-ecs/lib/random */
-	
+
 	module.exports = {
 	  /**
 	   * Get a pseudo-random number between the minimum (inclusive) and maximum (exclusive) parameters.
@@ -4494,7 +4488,7 @@
 	  "inRange": function(min, max) {
 	    return min + Math.random() * (max - min);
 	  },
-	
+
 	  /**
 	   * Get a random element in an array
 	   * @function from
@@ -4521,9 +4515,9 @@
 	/**
 	 * @namespace Splat.saveData
 	 */
-	
+
 	var platform = __webpack_require__(4);
-	
+
 	function cookieGet(name) {
 	  var value = "; " + document.cookie;
 	  var parts = value.split("; " + name + "=");
@@ -4533,19 +4527,19 @@
 	    throw "cookie " + name + " was not found";
 	  }
 	}
-	
+
 	function cookieSet(name, value) {
 	  var expire = new Date();
 	  expire.setTime(expire.getTime() + 1000 * 60 * 60 * 24 * 365);
 	  var cookie = name + "=" + value + "; expires=" + expire.toUTCString() + ";";
 	  document.cookie = cookie;
 	}
-	
+
 	function getMultiple(getSingleFunc, keys, callback) {
 	  if (typeof keys === "string") {
 	    keys = [keys];
 	  }
-	
+
 	  try {
 	    var data = keys.map(function(key) {
 	      return [key, getSingleFunc(key)];
@@ -4553,13 +4547,13 @@
 	      accum[pair[0]] = pair[1];
 	      return accum;
 	    }, {});
-	
+
 	    callback(undefined, data);
 	  } catch (e) {
 	    callback(e);
 	  }
 	}
-	
+
 	function setMultiple(setSingleFunc, data, callback) {
 	  try {
 	    for (var key in data) {
@@ -4572,25 +4566,25 @@
 	    callback(e);
 	  }
 	}
-	
+
 	var cookieSaveData = {
 	  "get": getMultiple.bind(undefined, cookieGet),
 	  "set": setMultiple.bind(undefined, cookieSet)
 	};
-	
+
 	function localStorageGet(name) {
 	  return window.localStorage.getItem(name);
 	}
-	
+
 	function localStorageSet(name, value) {
 	  window.localStorage.setItem(name, value.toString());
 	}
-	
+
 	var localStorageSaveData = {
 	  "get": getMultiple.bind(undefined, localStorageGet),
 	  "set": setMultiple.bind(undefined, localStorageSet)
 	};
-	
+
 	/**
 	 * A function that is called when save data has finished being retrieved.
 	 * @callback saveDataGetFinished
@@ -4612,7 +4606,7 @@
 	    }
 	  });
 	}
-	
+
 	/**
 	 * A function that is called when save data has finished being stored.
 	 * @callback saveDataSetFinished
@@ -4629,12 +4623,12 @@
 	    callback(window.chrome.runtime.lastError);
 	  });
 	}
-	
+
 	var chromeStorageSaveData = {
 	  "get": chromeStorageGet,
 	  "set": chromeStorageSet
 	};
-	
+
 	if (platform.isChromeApp()) {
 	  module.exports = chromeStorageSaveData;
 	} else if (window.localStorage) {
@@ -4709,7 +4703,7 @@
 	 * <p>When you write your own systems they will also be included in your project's <code>systems.json</code> file.
 	 * @namespace Systems
 	 */
-	
+
 
 
 /***/ },
@@ -4717,7 +4711,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var random = __webpack_require__(62);
-	
+
 	/**
 	 * System that looks for an entity with the {@link Components.shake} and {@link Components.position} components.
 	 * Every frame the apply shake system will move the entity's position by a pseudo-random number of pixels between half the magnitude (positive and negative).
@@ -4743,14 +4737,14 @@
 	    var position = game.entities.getComponent(entity, "position");
 	    shake.lastPositionX = position.x;
 	    shake.lastPositionY = position.y;
-	
+
 	    var mx = shake.magnitudeX;
 	    if (mx === undefined) {
 	      mx = shake.magnitude || 0;
 	    }
 	    mx /= 2;
 	    position.x += random.inRange(-mx, mx);
-	
+
 	    var my = shake.magnitudeY;
 	    if (my === undefined) {
 	      my = shake.magnitude || 0;
@@ -4766,7 +4760,7 @@
 /***/ function(module, exports) {
 
 	"use strict";
-	
+
 	module.exports = function(ecs, game) { // eslint-disable-line no-unused-vars
 	  game.entities.registerSearch("backgroundColorSearch", ["backgroundColor", "size", "position"]);
 	  ecs.addEach(function(entity, elapsed) { // eslint-disable-line no-unused-vars
@@ -4817,19 +4811,19 @@
 	  }
 	  context.fill();
 	}
-	
+
 	module.exports = function(ecs, game) {
 	  ecs.add(function drawFrameRate(entities, elapsed) {
 	    var fps = Math.floor(1000 / elapsed);
-	
+
 	    var msg = fps + " FPS";
 	    game.context.font = "24px monospace";
 	    var w = game.context.measureText(msg).width;
-	
+
 	    game.context.fillStyle = "rgba(0,0,0,0.8)";
 	    game.context.strokeStyle = "rgba(0,0,0,0.9)";
 	    roundRect(game.context, game.canvas.width - 130, -5, 120, 45, 5);
-	
+
 	    if (fps < 30) {
 	      game.context.fillStyle = "#FE4848"; //red
 	    } else if (fps < 50) {
@@ -4837,11 +4831,11 @@
 	    } else {
 	      game.context.fillStyle = "#38F82A"; //green
 	    }
-	
+
 	    if (fps < 10) {
 	      fps = " " + fps;
 	    }
-	
+
 	    game.context.fillText(msg, game.canvas.width - w - 26, 25);
 	  });
 	};
@@ -4852,10 +4846,10 @@
 /***/ function(module, exports) {
 
 	var defaultSize = { "width": 0, "height": 0 };
-	
+
 	function drawEntity(game, entity, context) {
 	  var imageComponent = game.entities.getComponent(entity, "image");
-	
+
 	  var image = imageComponent.buffer;
 	  if (!image) {
 	    image = game.images.get(imageComponent.name);
@@ -4864,17 +4858,17 @@
 	    console.error("No such image", imageComponent.name, "for entity", entity, game.entities.getComponent(entity, "name"));
 	    return;
 	  }
-	
+
 	  // FIXME: disable these checks/warnings in production version
-	
+
 	  var sx = imageComponent.sourceX || 0;
 	  var sy = imageComponent.sourceY || 0;
-	
+
 	  var dx = imageComponent.destinationX || 0;
 	  var dy = imageComponent.destinationY || 0;
-	
+
 	  var size = game.entities.getComponent(entity, "size") || defaultSize;
-	
+
 	  var sw = imageComponent.sourceWidth || image.width;
 	  if (sw === 0) {
 	    console.warn("sourceWidth is 0, image would be invisible for entity", entity, game.entities.getComponent(entity, "name"));
@@ -4883,7 +4877,7 @@
 	  if (sh === 0) {
 	    console.warn("sourceHeight is 0, image would be invisible for entity", entity, game.entities.getComponent(entity, "name"));
 	  }
-	
+
 	  var dw = imageComponent.destinationWidth || size.width || image.width;
 	  if (dw === 0) {
 	    console.warn("destinationWidth is 0, image would be invisible for entity", entity, game.entities.getComponent(entity, "name"));
@@ -4892,14 +4886,14 @@
 	  if (dh === 0) {
 	    console.warn("destinationHeight is 0, image would be invisible for entity", entity, game.entities.getComponent(entity, "name"));
 	  }
-	
-	
+
+
 	  try {
 	    var position = game.entities.getComponent(entity, "position");
-	
+
 	    var dx2 = dx + position.x;
 	    var dy2 = dy + position.y;
-	
+
 	    var rotation = game.entities.getComponent(entity, "rotation");
 	    if (rotation !== undefined) {
 	      context.save();
@@ -4909,18 +4903,18 @@
 	      var y = position.y + ry;
 	      context.translate(x, y);
 	      context.rotate(rotation.angle);
-	
+
 	      dx2 = dx - rx;
 	      dy2 = dy - ry;
 	    }
-	
+
 	    var alpha = 1;
 	    if (imageComponent.alpha !== undefined) {
 	      alpha = imageComponent.alpha;
 	    }
 	    context.globalAlpha = alpha;
 	    context.drawImage(image, sx, sy, sw, sh, dx2, dy2, dw, dh);
-	
+
 	    if (rotation !== undefined) {
 	      context.restore();
 	    }
@@ -4928,7 +4922,7 @@
 	    console.error("Error drawing image", imageComponent.name, e);
 	  }
 	}
-	
+
 	module.exports = function(ecs, game) {
 	  game.entities.registerSearch("drawImage", ["image", "position"]);
 	  ecs.add(function drawImage(entities) {
@@ -4942,7 +4936,7 @@
 	      var yb = pb.y || 0;
 	      return za - zb || ya - yb || a - b;
 	    });
-	
+
 	    for (var i = 0; i < ids.length; i++) {
 	      drawEntity(game, ids[i], game.context);
 	    }
@@ -5002,7 +4996,7 @@
 	  ecs.addEach(function viewportMoveToCamera(entity) {
 	    var position = game.entities.getComponent(entity, "position");
 	    var size = game.entities.getComponent(entity, "size");
-	
+
 	    game.context.save();
 	    game.context.scale(game.canvas.width / size.width, game.canvas.height / size.height);
 	    game.context.translate(-Math.floor(position.x), -Math.floor(position.y));
@@ -5040,7 +5034,7 @@
 	    }
 	  }
 	}
-	
+
 	function applyAnimation(entity, a, animation, entities) {
 	  a.lastName = a.name; // track the old name so we can see if it changes
 	  Object.keys(animation[a.frame].properties).forEach(function(property) {
@@ -5051,7 +5045,7 @@
 	    setOwnPropertiesDeep(animation[a.frame].properties[property], dest);
 	  });
 	}
-	
+
 	module.exports = function(ecs, game) {
 	  game.entities.onAddComponent("animation", function(entity, component, a) {
 	    var animation = game.animations[a.name];
@@ -5106,15 +5100,15 @@
 	  ecs.addEach(function advanceTimers(entity, elapsed) {
 	    var timers = game.entities.getComponent(entity, "timers");
 	    var names = Object.keys(timers);
-	
+
 	    names.forEach(function(name) {
 	      var timer = timers[name];
 	      if (!timer.running) {
 	        return;
 	      }
-	
+
 	      timer.time += elapsed;
-	
+
 	      while (timer.time > timer.max) {
 	        if (timer.loop) {
 	          timer.time -= timer.max;
@@ -5160,11 +5154,11 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var easingJS = __webpack_require__(80);
-	
+
 	module.exports = function(ecs, game) {
 	  ecs.addEach(function applyEasing(entity, elapsed) {
 	    var easing = game.entities.getComponent(entity, "easing");
-	
+
 	    var properties = Object.keys(easing);
 	    for (var i = 0; i < properties.length; i++) {
 	      var current = easing[properties[i]];
@@ -5176,7 +5170,7 @@
 	    }
 	  }, "easing");
 	};
-	
+
 	function easeProperty(game, entity, property, easing) {
 	  var parts = property.split(".");
 	  var componentName = parts[0];
@@ -5195,7 +5189,7 @@
 /***/ function(module, exports) {
 
 	"use strict";
-	
+
 	var Easing = {
 	  linear: function linear(t, b, c, d) {
 	    return c * t / d + b;
@@ -5415,7 +5409,7 @@
 	    }
 	  }
 	};
-	
+
 	module.exports = Easing;
 
 /***/ },
@@ -5494,11 +5488,11 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var boxIntersect = __webpack_require__(85);
-	
+
 	module.exports = function(ecs, game) {
-	
+
 	  game.entities.registerSearch("boxCollider", ["position", "size", "collisions"]);
-	
+
 	  game.entities.onRemoveComponent("collisions", function(entity, component, collisions) {
 	    for (var i = 0; i < collisions.length; i++) {
 	      var otherCollisions = game.entities.getComponent(collisions[i], "collisions");
@@ -5508,7 +5502,7 @@
 	      }
 	    }
 	  });
-	
+
 	  var boxPool = [];
 	  var boxPoolLength = 0;
 	  function growBoxPool(size) {
@@ -5519,10 +5513,10 @@
 	      }
 	    }
 	  }
-	
+
 	  ecs.add(function boxCollider() {
 	    var ids = game.entities.find("boxCollider");
-	
+
 	    growBoxPool(ids.length);
 	    ids.forEach(function(entity, i) {
 	      game.entities.getComponent(entity, "collisions").length = 0;
@@ -5551,13 +5545,13 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
-	
+
 	module.exports = boxIntersectWrapper
-	
+
 	var pool = __webpack_require__(86)
 	var sweep = __webpack_require__(93)
 	var boxIntersectIter = __webpack_require__(95)
-	
+
 	function boxEmpty(d, box) {
 	  for(var j=0; j<d; ++j) {
 	    if(!(box[j] <= box[j+d])) {
@@ -5566,7 +5560,7 @@
 	  }
 	  return false
 	}
-	
+
 	//Unpack boxes into a flat typed array, remove empty boxes
 	function convertBoxes(boxes, d, data, ids) {
 	  var ptr = 0
@@ -5583,52 +5577,52 @@
 	  }
 	  return count
 	}
-	
+
 	//Perform type conversions, check bounds
 	function boxIntersect(red, blue, visit, full) {
 	  var n = red.length
 	  var m = blue.length
-	
+
 	  //If either array is empty, then we can skip this whole thing
 	  if(n <= 0 || m <= 0) {
 	    return
 	  }
-	
+
 	  //Compute dimension, if it is 0 then we skip
 	  var d = (red[0].length)>>>1
 	  if(d <= 0) {
 	    return
 	  }
-	
+
 	  var retval
-	
+
 	  //Convert red boxes
 	  var redList  = pool.mallocDouble(2*d*n)
 	  var redIds   = pool.mallocInt32(n)
 	  n = convertBoxes(red, d, redList, redIds)
-	
+
 	  if(n > 0) {
 	    if(d === 1 && full) {
 	      //Special case: 1d complete
 	      sweep.init(n)
 	      retval = sweep.sweepComplete(
-	        d, visit, 
+	        d, visit,
 	        0, n, redList, redIds,
 	        0, n, redList, redIds)
 	    } else {
-	
+
 	      //Convert blue boxes
 	      var blueList = pool.mallocDouble(2*d*m)
 	      var blueIds  = pool.mallocInt32(m)
 	      m = convertBoxes(blue, d, blueList, blueIds)
-	
+
 	      if(m > 0) {
 	        sweep.init(n+m)
-	
+
 	        if(d === 1) {
 	          //Special case: 1d bipartite
 	          retval = sweep.sweepBipartite(
-	            d, visit, 
+	            d, visit,
 	            0, n, redList,  redIds,
 	            0, m, blueList, blueIds)
 	        } else {
@@ -5638,38 +5632,38 @@
 	            n, redList,  redIds,
 	            m, blueList, blueIds)
 	        }
-	
+
 	        pool.free(blueList)
 	        pool.free(blueIds)
 	      }
 	    }
-	
+
 	    pool.free(redList)
 	    pool.free(redIds)
 	  }
-	
+
 	  return retval
 	}
-	
-	
+
+
 	var RESULT
-	
+
 	function appendItem(i,j) {
 	  RESULT.push([i,j])
 	}
-	
+
 	function intersectFullArray(x) {
 	  RESULT = []
 	  boxIntersect(x, x, appendItem, true)
 	  return RESULT
 	}
-	
+
 	function intersectBipartiteArray(x, y) {
 	  RESULT = []
 	  boxIntersect(x, y, appendItem, false)
 	  return RESULT
 	}
-	
+
 	//User-friendly wrapper, handle full input and no-visitor cases
 	function boxIntersectWrapper(arg0, arg1, arg2) {
 	  var result
@@ -5694,10 +5688,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, Buffer) {'use strict'
-	
+
 	var bits = __webpack_require__(91)
 	var dup = __webpack_require__(92)
-	
+
 	//Legacy pool support
 	if(!global.__TYPEDARRAY_POOL) {
 	  global.__TYPEDARRAY_POOL = {
@@ -5714,10 +5708,10 @@
 	    , BUFFER  : dup([32, 0])
 	  }
 	}
-	
+
 	var hasUint8C = (typeof Uint8ClampedArray) !== 'undefined'
 	var POOL = global.__TYPEDARRAY_POOL
-	
+
 	//Upgrade pool
 	if(!POOL.UINT8C) {
 	  POOL.UINT8C = dup([32, 0])
@@ -5725,11 +5719,11 @@
 	if(!POOL.BUFFER) {
 	  POOL.BUFFER = dup([32, 0])
 	}
-	
+
 	//New technique: Only allocate from ArrayBufferView and Buffer
 	var DATA    = POOL.DATA
 	  , BUFFER  = POOL.BUFFER
-	
+
 	exports.free = function free(array) {
 	  if(Buffer.isBuffer(array)) {
 	    BUFFER[bits.log2(array.length)].push(array)
@@ -5745,7 +5739,7 @@
 	    DATA[log_n].push(array)
 	  }
 	}
-	
+
 	function freeArrayBuffer(buffer) {
 	  if(!buffer) {
 	    return
@@ -5754,30 +5748,30 @@
 	  var log_n = bits.log2(n)
 	  DATA[log_n].push(buffer)
 	}
-	
+
 	function freeTypedArray(array) {
 	  freeArrayBuffer(array.buffer)
 	}
-	
+
 	exports.freeUint8 =
 	exports.freeUint16 =
 	exports.freeUint32 =
 	exports.freeInt8 =
 	exports.freeInt16 =
 	exports.freeInt32 =
-	exports.freeFloat32 = 
+	exports.freeFloat32 =
 	exports.freeFloat =
-	exports.freeFloat64 = 
-	exports.freeDouble = 
-	exports.freeUint8Clamped = 
+	exports.freeFloat64 =
+	exports.freeDouble =
+	exports.freeUint8Clamped =
 	exports.freeDataView = freeTypedArray
-	
+
 	exports.freeArrayBuffer = freeArrayBuffer
-	
+
 	exports.freeBuffer = function freeBuffer(array) {
 	  BUFFER[bits.log2(array.length)].push(array)
 	}
-	
+
 	exports.malloc = function malloc(n, dtype) {
 	  if(dtype === undefined || dtype === 'arraybuffer') {
 	    return mallocArrayBuffer(n)
@@ -5808,14 +5802,14 @@
 	      case 'data':
 	      case 'dataview':
 	        return mallocDataView(n)
-	
+
 	      default:
 	        return null
 	    }
 	  }
 	  return null
 	}
-	
+
 	function mallocArrayBuffer(n) {
 	  var n = bits.nextPow2(n)
 	  var log_n = bits.log2(n)
@@ -5826,47 +5820,47 @@
 	  return new ArrayBuffer(n)
 	}
 	exports.mallocArrayBuffer = mallocArrayBuffer
-	
+
 	function mallocUint8(n) {
 	  return new Uint8Array(mallocArrayBuffer(n), 0, n)
 	}
 	exports.mallocUint8 = mallocUint8
-	
+
 	function mallocUint16(n) {
 	  return new Uint16Array(mallocArrayBuffer(2*n), 0, n)
 	}
 	exports.mallocUint16 = mallocUint16
-	
+
 	function mallocUint32(n) {
 	  return new Uint32Array(mallocArrayBuffer(4*n), 0, n)
 	}
 	exports.mallocUint32 = mallocUint32
-	
+
 	function mallocInt8(n) {
 	  return new Int8Array(mallocArrayBuffer(n), 0, n)
 	}
 	exports.mallocInt8 = mallocInt8
-	
+
 	function mallocInt16(n) {
 	  return new Int16Array(mallocArrayBuffer(2*n), 0, n)
 	}
 	exports.mallocInt16 = mallocInt16
-	
+
 	function mallocInt32(n) {
 	  return new Int32Array(mallocArrayBuffer(4*n), 0, n)
 	}
 	exports.mallocInt32 = mallocInt32
-	
+
 	function mallocFloat(n) {
 	  return new Float32Array(mallocArrayBuffer(4*n), 0, n)
 	}
 	exports.mallocFloat32 = exports.mallocFloat = mallocFloat
-	
+
 	function mallocDouble(n) {
 	  return new Float64Array(mallocArrayBuffer(8*n), 0, n)
 	}
 	exports.mallocFloat64 = exports.mallocDouble = mallocDouble
-	
+
 	function mallocUint8Clamped(n) {
 	  if(hasUint8C) {
 	    return new Uint8ClampedArray(mallocArrayBuffer(n), 0, n)
@@ -5875,12 +5869,12 @@
 	  }
 	}
 	exports.mallocUint8Clamped = mallocUint8Clamped
-	
+
 	function mallocDataView(n) {
 	  return new DataView(mallocArrayBuffer(n), 0, n)
 	}
 	exports.mallocDataView = mallocDataView
-	
+
 	function mallocBuffer(n) {
 	  n = bits.nextPow2(n)
 	  var log_n = bits.log2(n)
@@ -5891,7 +5885,7 @@
 	  return new Buffer(n)
 	}
 	exports.mallocBuffer = mallocBuffer
-	
+
 	exports.clearCache = function clearCache() {
 	  for(var i=0; i<32; ++i) {
 	    POOL.UINT8[i].length = 0
@@ -5920,17 +5914,17 @@
 	 * @license  MIT
 	 */
 	/* eslint-disable no-proto */
-	
+
 	'use strict'
-	
+
 	var base64 = __webpack_require__(88)
 	var ieee754 = __webpack_require__(89)
 	var isArray = __webpack_require__(90)
-	
+
 	exports.Buffer = Buffer
 	exports.SlowBuffer = SlowBuffer
 	exports.INSPECT_MAX_BYTES = 50
-	
+
 	/**
 	 * If `Buffer.TYPED_ARRAY_SUPPORT`:
 	 *   === true    Use Uint8Array implementation (fastest)
@@ -5951,19 +5945,19 @@
 	 *
 	 *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
 	 *     incorrect length in some situations.
-	
+
 	 * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
 	 * get the Object implementation, which is slower but behaves correctly.
 	 */
 	Buffer.TYPED_ARRAY_SUPPORT = global.TYPED_ARRAY_SUPPORT !== undefined
 	  ? global.TYPED_ARRAY_SUPPORT
 	  : typedArraySupport()
-	
+
 	/*
 	 * Export kMaxLength after typed array support is determined.
 	 */
 	exports.kMaxLength = kMaxLength()
-	
+
 	function typedArraySupport () {
 	  try {
 	    var arr = new Uint8Array(1)
@@ -5975,13 +5969,13 @@
 	    return false
 	  }
 	}
-	
+
 	function kMaxLength () {
 	  return Buffer.TYPED_ARRAY_SUPPORT
 	    ? 0x7fffffff
 	    : 0x3fffffff
 	}
-	
+
 	function createBuffer (that, length) {
 	  if (kMaxLength() < length) {
 	    throw new RangeError('Invalid typed array length')
@@ -5997,10 +5991,10 @@
 	    }
 	    that.length = length
 	  }
-	
+
 	  return that
 	}
-	
+
 	/**
 	 * The Buffer constructor returns instances of `Uint8Array` that have their
 	 * prototype changed to `Buffer.prototype`. Furthermore, `Buffer` is a subclass of
@@ -6010,12 +6004,12 @@
 	 *
 	 * The `Uint8Array` prototype remains unmodified.
 	 */
-	
+
 	function Buffer (arg, encodingOrOffset, length) {
 	  if (!Buffer.TYPED_ARRAY_SUPPORT && !(this instanceof Buffer)) {
 	    return new Buffer(arg, encodingOrOffset, length)
 	  }
-	
+
 	  // Common case.
 	  if (typeof arg === 'number') {
 	    if (typeof encodingOrOffset === 'string') {
@@ -6027,31 +6021,31 @@
 	  }
 	  return from(this, arg, encodingOrOffset, length)
 	}
-	
+
 	Buffer.poolSize = 8192 // not used by this implementation
-	
+
 	// TODO: Legacy, not needed anymore. Remove in next major version.
 	Buffer._augment = function (arr) {
 	  arr.__proto__ = Buffer.prototype
 	  return arr
 	}
-	
+
 	function from (that, value, encodingOrOffset, length) {
 	  if (typeof value === 'number') {
 	    throw new TypeError('"value" argument must not be a number')
 	  }
-	
+
 	  if (typeof ArrayBuffer !== 'undefined' && value instanceof ArrayBuffer) {
 	    return fromArrayBuffer(that, value, encodingOrOffset, length)
 	  }
-	
+
 	  if (typeof value === 'string') {
 	    return fromString(that, value, encodingOrOffset)
 	  }
-	
+
 	  return fromObject(that, value)
 	}
-	
+
 	/**
 	 * Functionally equivalent to Buffer(arg, encoding) but throws a TypeError
 	 * if value is a number.
@@ -6063,7 +6057,7 @@
 	Buffer.from = function (value, encodingOrOffset, length) {
 	  return from(null, value, encodingOrOffset, length)
 	}
-	
+
 	if (Buffer.TYPED_ARRAY_SUPPORT) {
 	  Buffer.prototype.__proto__ = Uint8Array.prototype
 	  Buffer.__proto__ = Uint8Array
@@ -6076,7 +6070,7 @@
 	    })
 	  }
 	}
-	
+
 	function assertSize (size) {
 	  if (typeof size !== 'number') {
 	    throw new TypeError('"size" argument must be a number')
@@ -6084,7 +6078,7 @@
 	    throw new RangeError('"size" argument must not be negative')
 	  }
 	}
-	
+
 	function alloc (that, size, fill, encoding) {
 	  assertSize(size)
 	  if (size <= 0) {
@@ -6100,7 +6094,7 @@
 	  }
 	  return createBuffer(that, size)
 	}
-	
+
 	/**
 	 * Creates a new filled Buffer instance.
 	 * alloc(size[, fill[, encoding]])
@@ -6108,7 +6102,7 @@
 	Buffer.alloc = function (size, fill, encoding) {
 	  return alloc(null, size, fill, encoding)
 	}
-	
+
 	function allocUnsafe (that, size) {
 	  assertSize(size)
 	  that = createBuffer(that, size < 0 ? 0 : checked(size) | 0)
@@ -6119,7 +6113,7 @@
 	  }
 	  return that
 	}
-	
+
 	/**
 	 * Equivalent to Buffer(num), by default creates a non-zero-filled Buffer instance.
 	 * */
@@ -6132,31 +6126,31 @@
 	Buffer.allocUnsafeSlow = function (size) {
 	  return allocUnsafe(null, size)
 	}
-	
+
 	function fromString (that, string, encoding) {
 	  if (typeof encoding !== 'string' || encoding === '') {
 	    encoding = 'utf8'
 	  }
-	
+
 	  if (!Buffer.isEncoding(encoding)) {
 	    throw new TypeError('"encoding" must be a valid string encoding')
 	  }
-	
+
 	  var length = byteLength(string, encoding) | 0
 	  that = createBuffer(that, length)
-	
+
 	  var actual = that.write(string, encoding)
-	
+
 	  if (actual !== length) {
 	    // Writing a hex string, for example, that contains invalid characters will
 	    // cause everything after the first invalid character to be ignored. (e.g.
 	    // 'abxxcd' will be treated as 'ab')
 	    that = that.slice(0, actual)
 	  }
-	
+
 	  return that
 	}
-	
+
 	function fromArrayLike (that, array) {
 	  var length = array.length < 0 ? 0 : checked(array.length) | 0
 	  that = createBuffer(that, length)
@@ -6165,18 +6159,18 @@
 	  }
 	  return that
 	}
-	
+
 	function fromArrayBuffer (that, array, byteOffset, length) {
 	  array.byteLength // this throws if `array` is not a valid ArrayBuffer
-	
+
 	  if (byteOffset < 0 || array.byteLength < byteOffset) {
 	    throw new RangeError('\'offset\' is out of bounds')
 	  }
-	
+
 	  if (array.byteLength < byteOffset + (length || 0)) {
 	    throw new RangeError('\'length\' is out of bounds')
 	  }
-	
+
 	  if (byteOffset === undefined && length === undefined) {
 	    array = new Uint8Array(array)
 	  } else if (length === undefined) {
@@ -6184,7 +6178,7 @@
 	  } else {
 	    array = new Uint8Array(array, byteOffset, length)
 	  }
-	
+
 	  if (Buffer.TYPED_ARRAY_SUPPORT) {
 	    // Return an augmented `Uint8Array` instance, for best performance
 	    that = array
@@ -6195,20 +6189,20 @@
 	  }
 	  return that
 	}
-	
+
 	function fromObject (that, obj) {
 	  if (Buffer.isBuffer(obj)) {
 	    var len = checked(obj.length) | 0
 	    that = createBuffer(that, len)
-	
+
 	    if (that.length === 0) {
 	      return that
 	    }
-	
+
 	    obj.copy(that, 0, 0, len)
 	    return that
 	  }
-	
+
 	  if (obj) {
 	    if ((typeof ArrayBuffer !== 'undefined' &&
 	        obj.buffer instanceof ArrayBuffer) || 'length' in obj) {
@@ -6217,15 +6211,15 @@
 	      }
 	      return fromArrayLike(that, obj)
 	    }
-	
+
 	    if (obj.type === 'Buffer' && isArray(obj.data)) {
 	      return fromArrayLike(that, obj.data)
 	    }
 	  }
-	
+
 	  throw new TypeError('First argument must be a string, Buffer, ArrayBuffer, Array, or array-like object.')
 	}
-	
+
 	function checked (length) {
 	  // Note: cannot use `length < kMaxLength()` here because that fails when
 	  // length is NaN (which is otherwise coerced to zero.)
@@ -6235,28 +6229,28 @@
 	  }
 	  return length | 0
 	}
-	
+
 	function SlowBuffer (length) {
 	  if (+length != length) { // eslint-disable-line eqeqeq
 	    length = 0
 	  }
 	  return Buffer.alloc(+length)
 	}
-	
+
 	Buffer.isBuffer = function isBuffer (b) {
 	  return !!(b != null && b._isBuffer)
 	}
-	
+
 	Buffer.compare = function compare (a, b) {
 	  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b)) {
 	    throw new TypeError('Arguments must be Buffers')
 	  }
-	
+
 	  if (a === b) return 0
-	
+
 	  var x = a.length
 	  var y = b.length
-	
+
 	  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
 	    if (a[i] !== b[i]) {
 	      x = a[i]
@@ -6264,12 +6258,12 @@
 	      break
 	    }
 	  }
-	
+
 	  if (x < y) return -1
 	  if (y < x) return 1
 	  return 0
 	}
-	
+
 	Buffer.isEncoding = function isEncoding (encoding) {
 	  switch (String(encoding).toLowerCase()) {
 	    case 'hex':
@@ -6288,16 +6282,16 @@
 	      return false
 	  }
 	}
-	
+
 	Buffer.concat = function concat (list, length) {
 	  if (!isArray(list)) {
 	    throw new TypeError('"list" argument must be an Array of Buffers')
 	  }
-	
+
 	  if (list.length === 0) {
 	    return Buffer.alloc(0)
 	  }
-	
+
 	  var i
 	  if (length === undefined) {
 	    length = 0
@@ -6305,7 +6299,7 @@
 	      length += list[i].length
 	    }
 	  }
-	
+
 	  var buffer = Buffer.allocUnsafe(length)
 	  var pos = 0
 	  for (i = 0; i < list.length; ++i) {
@@ -6318,7 +6312,7 @@
 	  }
 	  return buffer
 	}
-	
+
 	function byteLength (string, encoding) {
 	  if (Buffer.isBuffer(string)) {
 	    return string.length
@@ -6330,10 +6324,10 @@
 	  if (typeof string !== 'string') {
 	    string = '' + string
 	  }
-	
+
 	  var len = string.length
 	  if (len === 0) return 0
-	
+
 	  // Use a for loop to avoid recursion
 	  var loweredCase = false
 	  for (;;) {
@@ -6363,13 +6357,13 @@
 	  }
 	}
 	Buffer.byteLength = byteLength
-	
+
 	function slowToString (encoding, start, end) {
 	  var loweredCase = false
-	
+
 	  // No need to verify that "this.length <= MAX_UINT32" since it's a read-only
 	  // property of a typed array.
-	
+
 	  // This behaves neither like String nor Uint8Array in that we set start/end
 	  // to their upper/lower bounds if the value passed is out of range.
 	  // undefined is handled specially as per ECMA-262 6th Edition,
@@ -6382,50 +6376,50 @@
 	  if (start > this.length) {
 	    return ''
 	  }
-	
+
 	  if (end === undefined || end > this.length) {
 	    end = this.length
 	  }
-	
+
 	  if (end <= 0) {
 	    return ''
 	  }
-	
+
 	  // Force coersion to uint32. This will also coerce falsey/NaN values to 0.
 	  end >>>= 0
 	  start >>>= 0
-	
+
 	  if (end <= start) {
 	    return ''
 	  }
-	
+
 	  if (!encoding) encoding = 'utf8'
-	
+
 	  while (true) {
 	    switch (encoding) {
 	      case 'hex':
 	        return hexSlice(this, start, end)
-	
+
 	      case 'utf8':
 	      case 'utf-8':
 	        return utf8Slice(this, start, end)
-	
+
 	      case 'ascii':
 	        return asciiSlice(this, start, end)
-	
+
 	      case 'latin1':
 	      case 'binary':
 	        return latin1Slice(this, start, end)
-	
+
 	      case 'base64':
 	        return base64Slice(this, start, end)
-	
+
 	      case 'ucs2':
 	      case 'ucs-2':
 	      case 'utf16le':
 	      case 'utf-16le':
 	        return utf16leSlice(this, start, end)
-	
+
 	      default:
 	        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
 	        encoding = (encoding + '').toLowerCase()
@@ -6433,17 +6427,17 @@
 	    }
 	  }
 	}
-	
+
 	// The property is used by `Buffer.isBuffer` and `is-buffer` (in Safari 5-7) to detect
 	// Buffer instances.
 	Buffer.prototype._isBuffer = true
-	
+
 	function swap (b, n, m) {
 	  var i = b[n]
 	  b[n] = b[m]
 	  b[m] = i
 	}
-	
+
 	Buffer.prototype.swap16 = function swap16 () {
 	  var len = this.length
 	  if (len % 2 !== 0) {
@@ -6454,7 +6448,7 @@
 	  }
 	  return this
 	}
-	
+
 	Buffer.prototype.swap32 = function swap32 () {
 	  var len = this.length
 	  if (len % 4 !== 0) {
@@ -6466,7 +6460,7 @@
 	  }
 	  return this
 	}
-	
+
 	Buffer.prototype.swap64 = function swap64 () {
 	  var len = this.length
 	  if (len % 8 !== 0) {
@@ -6480,20 +6474,20 @@
 	  }
 	  return this
 	}
-	
+
 	Buffer.prototype.toString = function toString () {
 	  var length = this.length | 0
 	  if (length === 0) return ''
 	  if (arguments.length === 0) return utf8Slice(this, 0, length)
 	  return slowToString.apply(this, arguments)
 	}
-	
+
 	Buffer.prototype.equals = function equals (b) {
 	  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
 	  if (this === b) return true
 	  return Buffer.compare(this, b) === 0
 	}
-	
+
 	Buffer.prototype.inspect = function inspect () {
 	  var str = ''
 	  var max = exports.INSPECT_MAX_BYTES
@@ -6503,12 +6497,12 @@
 	  }
 	  return '<Buffer ' + str + '>'
 	}
-	
+
 	Buffer.prototype.compare = function compare (target, start, end, thisStart, thisEnd) {
 	  if (!Buffer.isBuffer(target)) {
 	    throw new TypeError('Argument must be a Buffer')
 	  }
-	
+
 	  if (start === undefined) {
 	    start = 0
 	  }
@@ -6521,11 +6515,11 @@
 	  if (thisEnd === undefined) {
 	    thisEnd = this.length
 	  }
-	
+
 	  if (start < 0 || end > target.length || thisStart < 0 || thisEnd > this.length) {
 	    throw new RangeError('out of range index')
 	  }
-	
+
 	  if (thisStart >= thisEnd && start >= end) {
 	    return 0
 	  }
@@ -6535,21 +6529,21 @@
 	  if (start >= end) {
 	    return 1
 	  }
-	
+
 	  start >>>= 0
 	  end >>>= 0
 	  thisStart >>>= 0
 	  thisEnd >>>= 0
-	
+
 	  if (this === target) return 0
-	
+
 	  var x = thisEnd - thisStart
 	  var y = end - start
 	  var len = Math.min(x, y)
-	
+
 	  var thisCopy = this.slice(thisStart, thisEnd)
 	  var targetCopy = target.slice(start, end)
-	
+
 	  for (var i = 0; i < len; ++i) {
 	    if (thisCopy[i] !== targetCopy[i]) {
 	      x = thisCopy[i]
@@ -6557,12 +6551,12 @@
 	      break
 	    }
 	  }
-	
+
 	  if (x < y) return -1
 	  if (y < x) return 1
 	  return 0
 	}
-	
+
 	// Finds either the first index of `val` in `buffer` at offset >= `byteOffset`,
 	// OR the last index of `val` in `buffer` at offset <= `byteOffset`.
 	//
@@ -6575,7 +6569,7 @@
 	function bidirectionalIndexOf (buffer, val, byteOffset, encoding, dir) {
 	  // Empty buffer means no match
 	  if (buffer.length === 0) return -1
-	
+
 	  // Normalize byteOffset
 	  if (typeof byteOffset === 'string') {
 	    encoding = byteOffset
@@ -6590,7 +6584,7 @@
 	    // byteOffset: it it's undefined, null, NaN, "foo", etc, search whole buffer
 	    byteOffset = dir ? 0 : (buffer.length - 1)
 	  }
-	
+
 	  // Normalize byteOffset: negative offsets start from the end of the buffer
 	  if (byteOffset < 0) byteOffset = buffer.length + byteOffset
 	  if (byteOffset >= buffer.length) {
@@ -6600,12 +6594,12 @@
 	    if (dir) byteOffset = 0
 	    else return -1
 	  }
-	
+
 	  // Normalize val
 	  if (typeof val === 'string') {
 	    val = Buffer.from(val, encoding)
 	  }
-	
+
 	  // Finally, search either indexOf (if dir is true) or lastIndexOf
 	  if (Buffer.isBuffer(val)) {
 	    // Special case: looking for empty string/buffer always fails
@@ -6625,15 +6619,15 @@
 	    }
 	    return arrayIndexOf(buffer, [ val ], byteOffset, encoding, dir)
 	  }
-	
+
 	  throw new TypeError('val must be string, number or Buffer')
 	}
-	
+
 	function arrayIndexOf (arr, val, byteOffset, encoding, dir) {
 	  var indexSize = 1
 	  var arrLength = arr.length
 	  var valLength = val.length
-	
+
 	  if (encoding !== undefined) {
 	    encoding = String(encoding).toLowerCase()
 	    if (encoding === 'ucs2' || encoding === 'ucs-2' ||
@@ -6647,7 +6641,7 @@
 	      byteOffset /= 2
 	    }
 	  }
-	
+
 	  function read (buf, i) {
 	    if (indexSize === 1) {
 	      return buf[i]
@@ -6655,7 +6649,7 @@
 	      return buf.readUInt16BE(i * indexSize)
 	    }
 	  }
-	
+
 	  var i
 	  if (dir) {
 	    var foundIndex = -1
@@ -6681,22 +6675,22 @@
 	      if (found) return i
 	    }
 	  }
-	
+
 	  return -1
 	}
-	
+
 	Buffer.prototype.includes = function includes (val, byteOffset, encoding) {
 	  return this.indexOf(val, byteOffset, encoding) !== -1
 	}
-	
+
 	Buffer.prototype.indexOf = function indexOf (val, byteOffset, encoding) {
 	  return bidirectionalIndexOf(this, val, byteOffset, encoding, true)
 	}
-	
+
 	Buffer.prototype.lastIndexOf = function lastIndexOf (val, byteOffset, encoding) {
 	  return bidirectionalIndexOf(this, val, byteOffset, encoding, false)
 	}
-	
+
 	function hexWrite (buf, string, offset, length) {
 	  offset = Number(offset) || 0
 	  var remaining = buf.length - offset
@@ -6708,11 +6702,11 @@
 	      length = remaining
 	    }
 	  }
-	
+
 	  // must be an even number of digits
 	  var strLen = string.length
 	  if (strLen % 2 !== 0) throw new TypeError('Invalid hex string')
-	
+
 	  if (length > strLen / 2) {
 	    length = strLen / 2
 	  }
@@ -6723,27 +6717,27 @@
 	  }
 	  return i
 	}
-	
+
 	function utf8Write (buf, string, offset, length) {
 	  return blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
 	}
-	
+
 	function asciiWrite (buf, string, offset, length) {
 	  return blitBuffer(asciiToBytes(string), buf, offset, length)
 	}
-	
+
 	function latin1Write (buf, string, offset, length) {
 	  return asciiWrite(buf, string, offset, length)
 	}
-	
+
 	function base64Write (buf, string, offset, length) {
 	  return blitBuffer(base64ToBytes(string), buf, offset, length)
 	}
-	
+
 	function ucs2Write (buf, string, offset, length) {
 	  return blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length)
 	}
-	
+
 	Buffer.prototype.write = function write (string, offset, length, encoding) {
 	  // Buffer#write(string)
 	  if (offset === undefined) {
@@ -6771,43 +6765,43 @@
 	      'Buffer.write(string, encoding, offset[, length]) is no longer supported'
 	    )
 	  }
-	
+
 	  var remaining = this.length - offset
 	  if (length === undefined || length > remaining) length = remaining
-	
+
 	  if ((string.length > 0 && (length < 0 || offset < 0)) || offset > this.length) {
 	    throw new RangeError('Attempt to write outside buffer bounds')
 	  }
-	
+
 	  if (!encoding) encoding = 'utf8'
-	
+
 	  var loweredCase = false
 	  for (;;) {
 	    switch (encoding) {
 	      case 'hex':
 	        return hexWrite(this, string, offset, length)
-	
+
 	      case 'utf8':
 	      case 'utf-8':
 	        return utf8Write(this, string, offset, length)
-	
+
 	      case 'ascii':
 	        return asciiWrite(this, string, offset, length)
-	
+
 	      case 'latin1':
 	      case 'binary':
 	        return latin1Write(this, string, offset, length)
-	
+
 	      case 'base64':
 	        // Warning: maxLength not taken into account in base64Write
 	        return base64Write(this, string, offset, length)
-	
+
 	      case 'ucs2':
 	      case 'ucs-2':
 	      case 'utf16le':
 	      case 'utf-16le':
 	        return ucs2Write(this, string, offset, length)
-	
+
 	      default:
 	        if (loweredCase) throw new TypeError('Unknown encoding: ' + encoding)
 	        encoding = ('' + encoding).toLowerCase()
@@ -6815,14 +6809,14 @@
 	    }
 	  }
 	}
-	
+
 	Buffer.prototype.toJSON = function toJSON () {
 	  return {
 	    type: 'Buffer',
 	    data: Array.prototype.slice.call(this._arr || this, 0)
 	  }
 	}
-	
+
 	function base64Slice (buf, start, end) {
 	  if (start === 0 && end === buf.length) {
 	    return base64.fromByteArray(buf)
@@ -6830,11 +6824,11 @@
 	    return base64.fromByteArray(buf.slice(start, end))
 	  }
 	}
-	
+
 	function utf8Slice (buf, start, end) {
 	  end = Math.min(buf.length, end)
 	  var res = []
-	
+
 	  var i = start
 	  while (i < end) {
 	    var firstByte = buf[i]
@@ -6843,10 +6837,10 @@
 	      : (firstByte > 0xDF) ? 3
 	      : (firstByte > 0xBF) ? 2
 	      : 1
-	
+
 	    if (i + bytesPerSequence <= end) {
 	      var secondByte, thirdByte, fourthByte, tempCodePoint
-	
+
 	      switch (bytesPerSequence) {
 	        case 1:
 	          if (firstByte < 0x80) {
@@ -6884,7 +6878,7 @@
 	          }
 	      }
 	    }
-	
+
 	    if (codePoint === null) {
 	      // we did not generate a valid codePoint so insert a
 	      // replacement char (U+FFFD) and advance only 1 byte
@@ -6896,25 +6890,25 @@
 	      res.push(codePoint >>> 10 & 0x3FF | 0xD800)
 	      codePoint = 0xDC00 | codePoint & 0x3FF
 	    }
-	
+
 	    res.push(codePoint)
 	    i += bytesPerSequence
 	  }
-	
+
 	  return decodeCodePointsArray(res)
 	}
-	
+
 	// Based on http://stackoverflow.com/a/22747272/680742, the browser with
 	// the lowest limit is Chrome, with 0x10000 args.
 	// We go 1 magnitude less, for safety
 	var MAX_ARGUMENTS_LENGTH = 0x1000
-	
+
 	function decodeCodePointsArray (codePoints) {
 	  var len = codePoints.length
 	  if (len <= MAX_ARGUMENTS_LENGTH) {
 	    return String.fromCharCode.apply(String, codePoints) // avoid extra slice()
 	  }
-	
+
 	  // Decode in chunks to avoid "call stack size exceeded".
 	  var res = ''
 	  var i = 0
@@ -6926,40 +6920,40 @@
 	  }
 	  return res
 	}
-	
+
 	function asciiSlice (buf, start, end) {
 	  var ret = ''
 	  end = Math.min(buf.length, end)
-	
+
 	  for (var i = start; i < end; ++i) {
 	    ret += String.fromCharCode(buf[i] & 0x7F)
 	  }
 	  return ret
 	}
-	
+
 	function latin1Slice (buf, start, end) {
 	  var ret = ''
 	  end = Math.min(buf.length, end)
-	
+
 	  for (var i = start; i < end; ++i) {
 	    ret += String.fromCharCode(buf[i])
 	  }
 	  return ret
 	}
-	
+
 	function hexSlice (buf, start, end) {
 	  var len = buf.length
-	
+
 	  if (!start || start < 0) start = 0
 	  if (!end || end < 0 || end > len) end = len
-	
+
 	  var out = ''
 	  for (var i = start; i < end; ++i) {
 	    out += toHex(buf[i])
 	  }
 	  return out
 	}
-	
+
 	function utf16leSlice (buf, start, end) {
 	  var bytes = buf.slice(start, end)
 	  var res = ''
@@ -6968,28 +6962,28 @@
 	  }
 	  return res
 	}
-	
+
 	Buffer.prototype.slice = function slice (start, end) {
 	  var len = this.length
 	  start = ~~start
 	  end = end === undefined ? len : ~~end
-	
+
 	  if (start < 0) {
 	    start += len
 	    if (start < 0) start = 0
 	  } else if (start > len) {
 	    start = len
 	  }
-	
+
 	  if (end < 0) {
 	    end += len
 	    if (end < 0) end = 0
 	  } else if (end > len) {
 	    end = len
 	  }
-	
+
 	  if (end < start) end = start
-	
+
 	  var newBuf
 	  if (Buffer.TYPED_ARRAY_SUPPORT) {
 	    newBuf = this.subarray(start, end)
@@ -7001,10 +6995,10 @@
 	      newBuf[i] = this[i + start]
 	    }
 	  }
-	
+
 	  return newBuf
 	}
-	
+
 	/*
 	 * Need to make sure that buffer isn't trying to write out of bounds.
 	 */
@@ -7012,76 +7006,76 @@
 	  if ((offset % 1) !== 0 || offset < 0) throw new RangeError('offset is not uint')
 	  if (offset + ext > length) throw new RangeError('Trying to access beyond buffer length')
 	}
-	
+
 	Buffer.prototype.readUIntLE = function readUIntLE (offset, byteLength, noAssert) {
 	  offset = offset | 0
 	  byteLength = byteLength | 0
 	  if (!noAssert) checkOffset(offset, byteLength, this.length)
-	
+
 	  var val = this[offset]
 	  var mul = 1
 	  var i = 0
 	  while (++i < byteLength && (mul *= 0x100)) {
 	    val += this[offset + i] * mul
 	  }
-	
+
 	  return val
 	}
-	
+
 	Buffer.prototype.readUIntBE = function readUIntBE (offset, byteLength, noAssert) {
 	  offset = offset | 0
 	  byteLength = byteLength | 0
 	  if (!noAssert) {
 	    checkOffset(offset, byteLength, this.length)
 	  }
-	
+
 	  var val = this[offset + --byteLength]
 	  var mul = 1
 	  while (byteLength > 0 && (mul *= 0x100)) {
 	    val += this[offset + --byteLength] * mul
 	  }
-	
+
 	  return val
 	}
-	
+
 	Buffer.prototype.readUInt8 = function readUInt8 (offset, noAssert) {
 	  if (!noAssert) checkOffset(offset, 1, this.length)
 	  return this[offset]
 	}
-	
+
 	Buffer.prototype.readUInt16LE = function readUInt16LE (offset, noAssert) {
 	  if (!noAssert) checkOffset(offset, 2, this.length)
 	  return this[offset] | (this[offset + 1] << 8)
 	}
-	
+
 	Buffer.prototype.readUInt16BE = function readUInt16BE (offset, noAssert) {
 	  if (!noAssert) checkOffset(offset, 2, this.length)
 	  return (this[offset] << 8) | this[offset + 1]
 	}
-	
+
 	Buffer.prototype.readUInt32LE = function readUInt32LE (offset, noAssert) {
 	  if (!noAssert) checkOffset(offset, 4, this.length)
-	
+
 	  return ((this[offset]) |
 	      (this[offset + 1] << 8) |
 	      (this[offset + 2] << 16)) +
 	      (this[offset + 3] * 0x1000000)
 	}
-	
+
 	Buffer.prototype.readUInt32BE = function readUInt32BE (offset, noAssert) {
 	  if (!noAssert) checkOffset(offset, 4, this.length)
-	
+
 	  return (this[offset] * 0x1000000) +
 	    ((this[offset + 1] << 16) |
 	    (this[offset + 2] << 8) |
 	    this[offset + 3])
 	}
-	
+
 	Buffer.prototype.readIntLE = function readIntLE (offset, byteLength, noAssert) {
 	  offset = offset | 0
 	  byteLength = byteLength | 0
 	  if (!noAssert) checkOffset(offset, byteLength, this.length)
-	
+
 	  var val = this[offset]
 	  var mul = 1
 	  var i = 0
@@ -7089,17 +7083,17 @@
 	    val += this[offset + i] * mul
 	  }
 	  mul *= 0x80
-	
+
 	  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
-	
+
 	  return val
 	}
-	
+
 	Buffer.prototype.readIntBE = function readIntBE (offset, byteLength, noAssert) {
 	  offset = offset | 0
 	  byteLength = byteLength | 0
 	  if (!noAssert) checkOffset(offset, byteLength, this.length)
-	
+
 	  var i = byteLength
 	  var mul = 1
 	  var val = this[offset + --i]
@@ -7107,74 +7101,74 @@
 	    val += this[offset + --i] * mul
 	  }
 	  mul *= 0x80
-	
+
 	  if (val >= mul) val -= Math.pow(2, 8 * byteLength)
-	
+
 	  return val
 	}
-	
+
 	Buffer.prototype.readInt8 = function readInt8 (offset, noAssert) {
 	  if (!noAssert) checkOffset(offset, 1, this.length)
 	  if (!(this[offset] & 0x80)) return (this[offset])
 	  return ((0xff - this[offset] + 1) * -1)
 	}
-	
+
 	Buffer.prototype.readInt16LE = function readInt16LE (offset, noAssert) {
 	  if (!noAssert) checkOffset(offset, 2, this.length)
 	  var val = this[offset] | (this[offset + 1] << 8)
 	  return (val & 0x8000) ? val | 0xFFFF0000 : val
 	}
-	
+
 	Buffer.prototype.readInt16BE = function readInt16BE (offset, noAssert) {
 	  if (!noAssert) checkOffset(offset, 2, this.length)
 	  var val = this[offset + 1] | (this[offset] << 8)
 	  return (val & 0x8000) ? val | 0xFFFF0000 : val
 	}
-	
+
 	Buffer.prototype.readInt32LE = function readInt32LE (offset, noAssert) {
 	  if (!noAssert) checkOffset(offset, 4, this.length)
-	
+
 	  return (this[offset]) |
 	    (this[offset + 1] << 8) |
 	    (this[offset + 2] << 16) |
 	    (this[offset + 3] << 24)
 	}
-	
+
 	Buffer.prototype.readInt32BE = function readInt32BE (offset, noAssert) {
 	  if (!noAssert) checkOffset(offset, 4, this.length)
-	
+
 	  return (this[offset] << 24) |
 	    (this[offset + 1] << 16) |
 	    (this[offset + 2] << 8) |
 	    (this[offset + 3])
 	}
-	
+
 	Buffer.prototype.readFloatLE = function readFloatLE (offset, noAssert) {
 	  if (!noAssert) checkOffset(offset, 4, this.length)
 	  return ieee754.read(this, offset, true, 23, 4)
 	}
-	
+
 	Buffer.prototype.readFloatBE = function readFloatBE (offset, noAssert) {
 	  if (!noAssert) checkOffset(offset, 4, this.length)
 	  return ieee754.read(this, offset, false, 23, 4)
 	}
-	
+
 	Buffer.prototype.readDoubleLE = function readDoubleLE (offset, noAssert) {
 	  if (!noAssert) checkOffset(offset, 8, this.length)
 	  return ieee754.read(this, offset, true, 52, 8)
 	}
-	
+
 	Buffer.prototype.readDoubleBE = function readDoubleBE (offset, noAssert) {
 	  if (!noAssert) checkOffset(offset, 8, this.length)
 	  return ieee754.read(this, offset, false, 52, 8)
 	}
-	
+
 	function checkInt (buf, value, offset, ext, max, min) {
 	  if (!Buffer.isBuffer(buf)) throw new TypeError('"buffer" argument must be a Buffer instance')
 	  if (value > max || value < min) throw new RangeError('"value" argument is out of bounds')
 	  if (offset + ext > buf.length) throw new RangeError('Index out of range')
 	}
-	
+
 	Buffer.prototype.writeUIntLE = function writeUIntLE (value, offset, byteLength, noAssert) {
 	  value = +value
 	  offset = offset | 0
@@ -7183,17 +7177,17 @@
 	    var maxBytes = Math.pow(2, 8 * byteLength) - 1
 	    checkInt(this, value, offset, byteLength, maxBytes, 0)
 	  }
-	
+
 	  var mul = 1
 	  var i = 0
 	  this[offset] = value & 0xFF
 	  while (++i < byteLength && (mul *= 0x100)) {
 	    this[offset + i] = (value / mul) & 0xFF
 	  }
-	
+
 	  return offset + byteLength
 	}
-	
+
 	Buffer.prototype.writeUIntBE = function writeUIntBE (value, offset, byteLength, noAssert) {
 	  value = +value
 	  offset = offset | 0
@@ -7202,17 +7196,17 @@
 	    var maxBytes = Math.pow(2, 8 * byteLength) - 1
 	    checkInt(this, value, offset, byteLength, maxBytes, 0)
 	  }
-	
+
 	  var i = byteLength - 1
 	  var mul = 1
 	  this[offset + i] = value & 0xFF
 	  while (--i >= 0 && (mul *= 0x100)) {
 	    this[offset + i] = (value / mul) & 0xFF
 	  }
-	
+
 	  return offset + byteLength
 	}
-	
+
 	Buffer.prototype.writeUInt8 = function writeUInt8 (value, offset, noAssert) {
 	  value = +value
 	  offset = offset | 0
@@ -7221,7 +7215,7 @@
 	  this[offset] = (value & 0xff)
 	  return offset + 1
 	}
-	
+
 	function objectWriteUInt16 (buf, value, offset, littleEndian) {
 	  if (value < 0) value = 0xffff + value + 1
 	  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; ++i) {
@@ -7229,7 +7223,7 @@
 	      (littleEndian ? i : 1 - i) * 8
 	  }
 	}
-	
+
 	Buffer.prototype.writeUInt16LE = function writeUInt16LE (value, offset, noAssert) {
 	  value = +value
 	  offset = offset | 0
@@ -7242,7 +7236,7 @@
 	  }
 	  return offset + 2
 	}
-	
+
 	Buffer.prototype.writeUInt16BE = function writeUInt16BE (value, offset, noAssert) {
 	  value = +value
 	  offset = offset | 0
@@ -7255,14 +7249,14 @@
 	  }
 	  return offset + 2
 	}
-	
+
 	function objectWriteUInt32 (buf, value, offset, littleEndian) {
 	  if (value < 0) value = 0xffffffff + value + 1
 	  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; ++i) {
 	    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
 	  }
 	}
-	
+
 	Buffer.prototype.writeUInt32LE = function writeUInt32LE (value, offset, noAssert) {
 	  value = +value
 	  offset = offset | 0
@@ -7277,7 +7271,7 @@
 	  }
 	  return offset + 4
 	}
-	
+
 	Buffer.prototype.writeUInt32BE = function writeUInt32BE (value, offset, noAssert) {
 	  value = +value
 	  offset = offset | 0
@@ -7292,16 +7286,16 @@
 	  }
 	  return offset + 4
 	}
-	
+
 	Buffer.prototype.writeIntLE = function writeIntLE (value, offset, byteLength, noAssert) {
 	  value = +value
 	  offset = offset | 0
 	  if (!noAssert) {
 	    var limit = Math.pow(2, 8 * byteLength - 1)
-	
+
 	    checkInt(this, value, offset, byteLength, limit - 1, -limit)
 	  }
-	
+
 	  var i = 0
 	  var mul = 1
 	  var sub = 0
@@ -7312,19 +7306,19 @@
 	    }
 	    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
 	  }
-	
+
 	  return offset + byteLength
 	}
-	
+
 	Buffer.prototype.writeIntBE = function writeIntBE (value, offset, byteLength, noAssert) {
 	  value = +value
 	  offset = offset | 0
 	  if (!noAssert) {
 	    var limit = Math.pow(2, 8 * byteLength - 1)
-	
+
 	    checkInt(this, value, offset, byteLength, limit - 1, -limit)
 	  }
-	
+
 	  var i = byteLength - 1
 	  var mul = 1
 	  var sub = 0
@@ -7335,10 +7329,10 @@
 	    }
 	    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
 	  }
-	
+
 	  return offset + byteLength
 	}
-	
+
 	Buffer.prototype.writeInt8 = function writeInt8 (value, offset, noAssert) {
 	  value = +value
 	  offset = offset | 0
@@ -7348,7 +7342,7 @@
 	  this[offset] = (value & 0xff)
 	  return offset + 1
 	}
-	
+
 	Buffer.prototype.writeInt16LE = function writeInt16LE (value, offset, noAssert) {
 	  value = +value
 	  offset = offset | 0
@@ -7361,7 +7355,7 @@
 	  }
 	  return offset + 2
 	}
-	
+
 	Buffer.prototype.writeInt16BE = function writeInt16BE (value, offset, noAssert) {
 	  value = +value
 	  offset = offset | 0
@@ -7374,7 +7368,7 @@
 	  }
 	  return offset + 2
 	}
-	
+
 	Buffer.prototype.writeInt32LE = function writeInt32LE (value, offset, noAssert) {
 	  value = +value
 	  offset = offset | 0
@@ -7389,7 +7383,7 @@
 	  }
 	  return offset + 4
 	}
-	
+
 	Buffer.prototype.writeInt32BE = function writeInt32BE (value, offset, noAssert) {
 	  value = +value
 	  offset = offset | 0
@@ -7405,12 +7399,12 @@
 	  }
 	  return offset + 4
 	}
-	
+
 	function checkIEEE754 (buf, value, offset, ext, max, min) {
 	  if (offset + ext > buf.length) throw new RangeError('Index out of range')
 	  if (offset < 0) throw new RangeError('Index out of range')
 	}
-	
+
 	function writeFloat (buf, value, offset, littleEndian, noAssert) {
 	  if (!noAssert) {
 	    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)
@@ -7418,15 +7412,15 @@
 	  ieee754.write(buf, value, offset, littleEndian, 23, 4)
 	  return offset + 4
 	}
-	
+
 	Buffer.prototype.writeFloatLE = function writeFloatLE (value, offset, noAssert) {
 	  return writeFloat(this, value, offset, true, noAssert)
 	}
-	
+
 	Buffer.prototype.writeFloatBE = function writeFloatBE (value, offset, noAssert) {
 	  return writeFloat(this, value, offset, false, noAssert)
 	}
-	
+
 	function writeDouble (buf, value, offset, littleEndian, noAssert) {
 	  if (!noAssert) {
 	    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)
@@ -7434,15 +7428,15 @@
 	  ieee754.write(buf, value, offset, littleEndian, 52, 8)
 	  return offset + 8
 	}
-	
+
 	Buffer.prototype.writeDoubleLE = function writeDoubleLE (value, offset, noAssert) {
 	  return writeDouble(this, value, offset, true, noAssert)
 	}
-	
+
 	Buffer.prototype.writeDoubleBE = function writeDoubleBE (value, offset, noAssert) {
 	  return writeDouble(this, value, offset, false, noAssert)
 	}
-	
+
 	// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
 	Buffer.prototype.copy = function copy (target, targetStart, start, end) {
 	  if (!start) start = 0
@@ -7450,27 +7444,27 @@
 	  if (targetStart >= target.length) targetStart = target.length
 	  if (!targetStart) targetStart = 0
 	  if (end > 0 && end < start) end = start
-	
+
 	  // Copy 0 bytes; we're done
 	  if (end === start) return 0
 	  if (target.length === 0 || this.length === 0) return 0
-	
+
 	  // Fatal error conditions
 	  if (targetStart < 0) {
 	    throw new RangeError('targetStart out of bounds')
 	  }
 	  if (start < 0 || start >= this.length) throw new RangeError('sourceStart out of bounds')
 	  if (end < 0) throw new RangeError('sourceEnd out of bounds')
-	
+
 	  // Are we oob?
 	  if (end > this.length) end = this.length
 	  if (target.length - targetStart < end - start) {
 	    end = target.length - targetStart + start
 	  }
-	
+
 	  var len = end - start
 	  var i
-	
+
 	  if (this === target && start < targetStart && targetStart < end) {
 	    // descending copy from end
 	    for (i = len - 1; i >= 0; --i) {
@@ -7488,10 +7482,10 @@
 	      targetStart
 	    )
 	  }
-	
+
 	  return len
 	}
-	
+
 	// Usage:
 	//    buffer.fill(number[, offset[, end]])
 	//    buffer.fill(buffer[, offset[, end]])
@@ -7522,21 +7516,21 @@
 	  } else if (typeof val === 'number') {
 	    val = val & 255
 	  }
-	
+
 	  // Invalid ranges are not set to a default, so can range check early.
 	  if (start < 0 || this.length < start || this.length < end) {
 	    throw new RangeError('Out of range index')
 	  }
-	
+
 	  if (end <= start) {
 	    return this
 	  }
-	
+
 	  start = start >>> 0
 	  end = end === undefined ? this.length : end >>> 0
-	
+
 	  if (!val) val = 0
-	
+
 	  var i
 	  if (typeof val === 'number') {
 	    for (i = start; i < end; ++i) {
@@ -7551,15 +7545,15 @@
 	      this[i + start] = bytes[i % len]
 	    }
 	  }
-	
+
 	  return this
 	}
-	
+
 	// HELPER FUNCTIONS
 	// ================
-	
+
 	var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g
-	
+
 	function base64clean (str) {
 	  // Node strips out invalid characters like \n and \t from the string, base64-js does not
 	  str = stringtrim(str).replace(INVALID_BASE64_RE, '')
@@ -7571,27 +7565,27 @@
 	  }
 	  return str
 	}
-	
+
 	function stringtrim (str) {
 	  if (str.trim) return str.trim()
 	  return str.replace(/^\s+|\s+$/g, '')
 	}
-	
+
 	function toHex (n) {
 	  if (n < 16) return '0' + n.toString(16)
 	  return n.toString(16)
 	}
-	
+
 	function utf8ToBytes (string, units) {
 	  units = units || Infinity
 	  var codePoint
 	  var length = string.length
 	  var leadSurrogate = null
 	  var bytes = []
-	
+
 	  for (var i = 0; i < length; ++i) {
 	    codePoint = string.charCodeAt(i)
-	
+
 	    // is surrogate component
 	    if (codePoint > 0xD7FF && codePoint < 0xE000) {
 	      // last char was a lead
@@ -7606,29 +7600,29 @@
 	          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
 	          continue
 	        }
-	
+
 	        // valid lead
 	        leadSurrogate = codePoint
-	
+
 	        continue
 	      }
-	
+
 	      // 2 leads in a row
 	      if (codePoint < 0xDC00) {
 	        if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
 	        leadSurrogate = codePoint
 	        continue
 	      }
-	
+
 	      // valid surrogate pair
 	      codePoint = (leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00) + 0x10000
 	    } else if (leadSurrogate) {
 	      // valid bmp char, but last char was a lead
 	      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
 	    }
-	
+
 	    leadSurrogate = null
-	
+
 	    // encode utf8
 	    if (codePoint < 0x80) {
 	      if ((units -= 1) < 0) break
@@ -7658,10 +7652,10 @@
 	      throw new Error('Invalid code point')
 	    }
 	  }
-	
+
 	  return bytes
 	}
-	
+
 	function asciiToBytes (str) {
 	  var byteArray = []
 	  for (var i = 0; i < str.length; ++i) {
@@ -7670,27 +7664,27 @@
 	  }
 	  return byteArray
 	}
-	
+
 	function utf16leToBytes (str, units) {
 	  var c, hi, lo
 	  var byteArray = []
 	  for (var i = 0; i < str.length; ++i) {
 	    if ((units -= 2) < 0) break
-	
+
 	    c = str.charCodeAt(i)
 	    hi = c >> 8
 	    lo = c % 256
 	    byteArray.push(lo)
 	    byteArray.push(hi)
 	  }
-	
+
 	  return byteArray
 	}
-	
+
 	function base64ToBytes (str) {
 	  return base64.toByteArray(base64clean(str))
 	}
-	
+
 	function blitBuffer (src, dst, offset, length) {
 	  for (var i = 0; i < length; ++i) {
 	    if ((i + offset >= dst.length) || (i >= src.length)) break
@@ -7698,11 +7692,11 @@
 	  }
 	  return i
 	}
-	
+
 	function isnan (val) {
 	  return val !== val // eslint-disable-line no-self-compare
 	}
-	
+
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(87).Buffer, (function() { return this; }())))
 
 /***/ },
@@ -7710,57 +7704,57 @@
 /***/ function(module, exports) {
 
 	'use strict'
-	
+
 	exports.toByteArray = toByteArray
 	exports.fromByteArray = fromByteArray
-	
+
 	var lookup = []
 	var revLookup = []
 	var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array
-	
+
 	function init () {
 	  var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 	  for (var i = 0, len = code.length; i < len; ++i) {
 	    lookup[i] = code[i]
 	    revLookup[code.charCodeAt(i)] = i
 	  }
-	
+
 	  revLookup['-'.charCodeAt(0)] = 62
 	  revLookup['_'.charCodeAt(0)] = 63
 	}
-	
+
 	init()
-	
+
 	function toByteArray (b64) {
 	  var i, j, l, tmp, placeHolders, arr
 	  var len = b64.length
-	
+
 	  if (len % 4 > 0) {
 	    throw new Error('Invalid string. Length must be a multiple of 4')
 	  }
-	
+
 	  // the number of equal signs (place holders)
 	  // if there are two placeholders, than the two characters before it
 	  // represent one byte
 	  // if there is only one, then the three characters before it represent 2 bytes
 	  // this is just a cheap hack to not do indexOf twice
 	  placeHolders = b64[len - 2] === '=' ? 2 : b64[len - 1] === '=' ? 1 : 0
-	
+
 	  // base64 is 4/3 + up to two characters of the original data
 	  arr = new Arr(len * 3 / 4 - placeHolders)
-	
+
 	  // if there are placeholders, only get up to the last complete 4 chars
 	  l = placeHolders > 0 ? len - 4 : len
-	
+
 	  var L = 0
-	
+
 	  for (i = 0, j = 0; i < l; i += 4, j += 3) {
 	    tmp = (revLookup[b64.charCodeAt(i)] << 18) | (revLookup[b64.charCodeAt(i + 1)] << 12) | (revLookup[b64.charCodeAt(i + 2)] << 6) | revLookup[b64.charCodeAt(i + 3)]
 	    arr[L++] = (tmp >> 16) & 0xFF
 	    arr[L++] = (tmp >> 8) & 0xFF
 	    arr[L++] = tmp & 0xFF
 	  }
-	
+
 	  if (placeHolders === 2) {
 	    tmp = (revLookup[b64.charCodeAt(i)] << 2) | (revLookup[b64.charCodeAt(i + 1)] >> 4)
 	    arr[L++] = tmp & 0xFF
@@ -7769,14 +7763,14 @@
 	    arr[L++] = (tmp >> 8) & 0xFF
 	    arr[L++] = tmp & 0xFF
 	  }
-	
+
 	  return arr
 	}
-	
+
 	function tripletToBase64 (num) {
 	  return lookup[num >> 18 & 0x3F] + lookup[num >> 12 & 0x3F] + lookup[num >> 6 & 0x3F] + lookup[num & 0x3F]
 	}
-	
+
 	function encodeChunk (uint8, start, end) {
 	  var tmp
 	  var output = []
@@ -7786,7 +7780,7 @@
 	  }
 	  return output.join('')
 	}
-	
+
 	function fromByteArray (uint8) {
 	  var tmp
 	  var len = uint8.length
@@ -7794,12 +7788,12 @@
 	  var output = ''
 	  var parts = []
 	  var maxChunkLength = 16383 // must be multiple of 3
-	
+
 	  // go through the array every three bytes, we'll deal with trailing stuff later
 	  for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
 	    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
 	  }
-	
+
 	  // pad the end with zeros, but make sure to not forget the extra bytes
 	  if (extraBytes === 1) {
 	    tmp = uint8[len - 1]
@@ -7813,9 +7807,9 @@
 	    output += lookup[(tmp << 2) & 0x3F]
 	    output += '='
 	  }
-	
+
 	  parts.push(output)
-	
+
 	  return parts.join('')
 	}
 
@@ -7833,19 +7827,19 @@
 	  var i = isLE ? (nBytes - 1) : 0
 	  var d = isLE ? -1 : 1
 	  var s = buffer[offset + i]
-	
+
 	  i += d
-	
+
 	  e = s & ((1 << (-nBits)) - 1)
 	  s >>= (-nBits)
 	  nBits += eLen
 	  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
-	
+
 	  m = e & ((1 << (-nBits)) - 1)
 	  e >>= (-nBits)
 	  nBits += mLen
 	  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
-	
+
 	  if (e === 0) {
 	    e = 1 - eBias
 	  } else if (e === eMax) {
@@ -7856,7 +7850,7 @@
 	  }
 	  return (s ? -1 : 1) * m * Math.pow(2, e - mLen)
 	}
-	
+
 	exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 	  var e, m, c
 	  var eLen = nBytes * 8 - mLen - 1
@@ -7866,9 +7860,9 @@
 	  var i = isLE ? 0 : (nBytes - 1)
 	  var d = isLE ? 1 : -1
 	  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
-	
+
 	  value = Math.abs(value)
-	
+
 	  if (isNaN(value) || value === Infinity) {
 	    m = isNaN(value) ? 1 : 0
 	    e = eMax
@@ -7887,7 +7881,7 @@
 	      e++
 	      c /= 2
 	    }
-	
+
 	    if (e + eBias >= eMax) {
 	      m = 0
 	      e = eMax
@@ -7899,13 +7893,13 @@
 	      e = 0
 	    }
 	  }
-	
+
 	  for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
-	
+
 	  e = (e << mLen) | m
 	  eLen += mLen
 	  for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
-	
+
 	  buffer[offset + i - d] |= s * 128
 	}
 
@@ -7915,7 +7909,7 @@
 /***/ function(module, exports) {
 
 	var toString = {}.toString;
-	
+
 	module.exports = Array.isArray || function (arr) {
 	  return toString.call(arr) == '[object Array]';
 	};
@@ -7933,43 +7927,43 @@
 	 * Ported from Stanford bit twiddling hack library:
 	 *    http://graphics.stanford.edu/~seander/bithacks.html
 	 */
-	
+
 	"use strict"; "use restrict";
-	
+
 	//Number of bits in an integer
 	var INT_BITS = 32;
-	
+
 	//Constants
 	exports.INT_BITS  = INT_BITS;
 	exports.INT_MAX   =  0x7fffffff;
 	exports.INT_MIN   = -1<<(INT_BITS-1);
-	
+
 	//Returns -1, 0, +1 depending on sign of x
 	exports.sign = function(v) {
 	  return (v > 0) - (v < 0);
 	}
-	
+
 	//Computes absolute value of integer
 	exports.abs = function(v) {
 	  var mask = v >> (INT_BITS-1);
 	  return (v ^ mask) - mask;
 	}
-	
+
 	//Computes minimum of integers x and y
 	exports.min = function(x, y) {
 	  return y ^ ((x ^ y) & -(x < y));
 	}
-	
+
 	//Computes maximum of integers x and y
 	exports.max = function(x, y) {
 	  return x ^ ((x ^ y) & -(x < y));
 	}
-	
+
 	//Checks if a number is a power of two
 	exports.isPow2 = function(v) {
 	  return !(v & (v-1)) && (!!v);
 	}
-	
+
 	//Computes log base 2 of v
 	exports.log2 = function(v) {
 	  var r, shift;
@@ -7979,21 +7973,21 @@
 	  shift = (v > 0x3   ) << 1; v >>>= shift; r |= shift;
 	  return r | (v >> 1);
 	}
-	
+
 	//Computes log base 10 of v
 	exports.log10 = function(v) {
 	  return  (v >= 1000000000) ? 9 : (v >= 100000000) ? 8 : (v >= 10000000) ? 7 :
 	          (v >= 1000000) ? 6 : (v >= 100000) ? 5 : (v >= 10000) ? 4 :
 	          (v >= 1000) ? 3 : (v >= 100) ? 2 : (v >= 10) ? 1 : 0;
 	}
-	
+
 	//Counts number of bits
 	exports.popCount = function(v) {
 	  v = v - ((v >>> 1) & 0x55555555);
 	  v = (v & 0x33333333) + ((v >>> 2) & 0x33333333);
 	  return ((v + (v >>> 4) & 0xF0F0F0F) * 0x1010101) >>> 24;
 	}
-	
+
 	//Counts number of trailing zeros
 	function countTrailingZeros(v) {
 	  var c = 32;
@@ -8007,7 +8001,7 @@
 	  return c;
 	}
 	exports.countTrailingZeros = countTrailingZeros;
-	
+
 	//Rounds to next power of 2
 	exports.nextPow2 = function(v) {
 	  v += v === 0;
@@ -8019,7 +8013,7 @@
 	  v |= v >>> 16;
 	  return v + 1;
 	}
-	
+
 	//Rounds down to previous power of 2
 	exports.prevPow2 = function(v) {
 	  v |= v >>> 1;
@@ -8029,7 +8023,7 @@
 	  v |= v >>> 16;
 	  return v - (v>>>1);
 	}
-	
+
 	//Computes parity of word
 	exports.parity = function(v) {
 	  v ^= v >>> 16;
@@ -8038,9 +8032,9 @@
 	  v &= 0xf;
 	  return (0x6996 >>> v) & 1;
 	}
-	
+
 	var REVERSE_TABLE = new Array(256);
-	
+
 	(function(tab) {
 	  for(var i=0; i<256; ++i) {
 	    var v = i, r = i, s = 7;
@@ -8052,7 +8046,7 @@
 	    tab[i] = (r << s) & 0xff;
 	  }
 	})(REVERSE_TABLE);
-	
+
 	//Reverse bits in a 32 bit word
 	exports.reverse = function(v) {
 	  return  (REVERSE_TABLE[ v         & 0xff] << 24) |
@@ -8060,7 +8054,7 @@
 	          (REVERSE_TABLE[(v >>> 16) & 0xff] << 8)  |
 	           REVERSE_TABLE[(v >>> 24) & 0xff];
 	}
-	
+
 	//Interleave bits of 2 coordinates with 16 bits.  Useful for fast quadtree codes
 	exports.interleave2 = function(x, y) {
 	  x &= 0xFFFF;
@@ -8068,16 +8062,16 @@
 	  x = (x | (x << 4)) & 0x0F0F0F0F;
 	  x = (x | (x << 2)) & 0x33333333;
 	  x = (x | (x << 1)) & 0x55555555;
-	
+
 	  y &= 0xFFFF;
 	  y = (y | (y << 8)) & 0x00FF00FF;
 	  y = (y | (y << 4)) & 0x0F0F0F0F;
 	  y = (y | (y << 2)) & 0x33333333;
 	  y = (y | (y << 1)) & 0x55555555;
-	
+
 	  return x | (y << 1);
 	}
-	
+
 	//Extracts the nth interleaved component
 	exports.deinterleave2 = function(v, n) {
 	  v = (v >>> n) & 0x55555555;
@@ -8087,8 +8081,8 @@
 	  v = (v | (v >>> 16)) & 0x000FFFF;
 	  return (v << 16) >> 16;
 	}
-	
-	
+
+
 	//Interleave bits of 3 coordinates, each with 10 bits.  Useful for fast octree codes
 	exports.interleave3 = function(x, y, z) {
 	  x &= 0x3FF;
@@ -8096,23 +8090,23 @@
 	  x  = (x | (x<<8))  & 251719695;
 	  x  = (x | (x<<4))  & 3272356035;
 	  x  = (x | (x<<2))  & 1227133513;
-	
+
 	  y &= 0x3FF;
 	  y  = (y | (y<<16)) & 4278190335;
 	  y  = (y | (y<<8))  & 251719695;
 	  y  = (y | (y<<4))  & 3272356035;
 	  y  = (y | (y<<2))  & 1227133513;
 	  x |= (y << 1);
-	  
+
 	  z &= 0x3FF;
 	  z  = (z | (z<<16)) & 4278190335;
 	  z  = (z | (z<<8))  & 251719695;
 	  z  = (z | (z<<4))  & 3272356035;
 	  z  = (z | (z<<2))  & 1227133513;
-	  
+
 	  return x | (z << 2);
 	}
-	
+
 	//Extracts nth interleaved component of a 3-tuple
 	exports.deinterleave3 = function(v, n) {
 	  v = (v >>> n)       & 1227133513;
@@ -8122,13 +8116,13 @@
 	  v = (v | (v>>>16))  & 0x3FF;
 	  return (v<<22)>>22;
 	}
-	
+
 	//Computes next combination in colexicographic order (this is mistakenly called nextPermutation on the bit twiddling hacks page)
 	exports.nextCombination = function(v) {
 	  var t = v | (v - 1);
 	  return (t + 1) | (((~t & -~t) - 1) >>> (countTrailingZeros(v) + 1));
 	}
-	
+
 
 
 /***/ },
@@ -8136,7 +8130,7 @@
 /***/ function(module, exports) {
 
 	"use strict"
-	
+
 	function dupe_array(count, value, i) {
 	  var c = count[i]|0
 	  if(c <= 0) {
@@ -8154,7 +8148,7 @@
 	  }
 	  return result
 	}
-	
+
 	function dupe_number(count, value) {
 	  var result, i
 	  result = new Array(count)
@@ -8163,7 +8157,7 @@
 	  }
 	  return result
 	}
-	
+
 	function dupe(count, value) {
 	  if(typeof value === "undefined") {
 	    value = 0
@@ -8182,7 +8176,7 @@
 	  }
 	  return []
 	}
-	
+
 	module.exports = dupe
 
 /***/ },
@@ -8190,7 +8184,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
-	
+
 	module.exports = {
 	  init:           sqInit,
 	  sweepBipartite: sweepBipartite,
@@ -8198,14 +8192,14 @@
 	  scanBipartite:  scanBipartite,
 	  scanComplete:   scanComplete
 	}
-	
+
 	var pool  = __webpack_require__(86)
 	var bits  = __webpack_require__(91)
 	var isort = __webpack_require__(94)
-	
+
 	//Flag for blue
 	var BLUE_FLAG = (1<<28)
-	
+
 	//1D sweep event queue stuff (use pool to save space)
 	var INIT_CAPACITY      = 1024
 	var RED_SWEEP_QUEUE    = pool.mallocInt32(INIT_CAPACITY)
@@ -8215,7 +8209,7 @@
 	var COMMON_SWEEP_QUEUE = pool.mallocInt32(INIT_CAPACITY)
 	var COMMON_SWEEP_INDEX = pool.mallocInt32(INIT_CAPACITY)
 	var SWEEP_EVENTS       = pool.mallocDouble(INIT_CAPACITY * 8)
-	
+
 	//Reserves memory for the 1D sweep data structures
 	function sqInit(count) {
 	  var rcount = bits.nextPow2(count)
@@ -8249,7 +8243,7 @@
 	    SWEEP_EVENTS = pool.mallocDouble(eventLength)
 	  }
 	}
-	
+
 	//Remove an item from the active queue in O(1)
 	function sqPop(queue, index, count, item) {
 	  var idx = index[item]
@@ -8257,19 +8251,19 @@
 	  queue[idx] = top
 	  index[top] = idx
 	}
-	
+
 	//Insert an item into the active queue in O(1)
 	function sqPush(queue, index, count, item) {
 	  queue[count] = item
 	  index[item]  = count
 	}
-	
+
 	//Recursion base case: use 1D sweep algorithm
 	function sweepBipartite(
 	    d, visit,
 	    redStart,  redEnd, red, redIndex,
 	    blueStart, blueEnd, blue, blueIndex) {
-	
+
 	  //store events as pairs [coordinate, idx]
 	  //
 	  //  red create:  -(idx+1)
@@ -8281,7 +8275,7 @@
 	  var elemSize = 2*d
 	  var istart   = d-1
 	  var iend     = elemSize-1
-	
+
 	  for(var i=redStart; i<redEnd; ++i) {
 	    var idx = redIndex[i]
 	    var redOffset = elemSize*i
@@ -8290,7 +8284,7 @@
 	    SWEEP_EVENTS[ptr++] = red[redOffset+iend]
 	    SWEEP_EVENTS[ptr++] = idx
 	  }
-	
+
 	  for(var i=blueStart; i<blueEnd; ++i) {
 	    var idx = blueIndex[i]+BLUE_FLAG
 	    var blueOffset = elemSize*i
@@ -8299,11 +8293,11 @@
 	    SWEEP_EVENTS[ptr++] = blue[blueOffset+iend]
 	    SWEEP_EVENTS[ptr++] = idx
 	  }
-	
+
 	  //process events from left->right
 	  var n = ptr >>> 1
 	  isort(SWEEP_EVENTS, n)
-	  
+
 	  var redActive  = 0
 	  var blueActive = 0
 	  for(var i=0; i<n; ++i) {
@@ -8338,17 +8332,17 @@
 	    }
 	  }
 	}
-	
+
 	//Complete sweep
-	function sweepComplete(d, visit, 
+	function sweepComplete(d, visit,
 	  redStart, redEnd, red, redIndex,
 	  blueStart, blueEnd, blue, blueIndex) {
-	
+
 	  var ptr      = 0
 	  var elemSize = 2*d
 	  var istart   = d-1
 	  var iend     = elemSize-1
-	
+
 	  for(var i=redStart; i<redEnd; ++i) {
 	    var idx = (redIndex[i]+1)<<1
 	    var redOffset = elemSize*i
@@ -8357,7 +8351,7 @@
 	    SWEEP_EVENTS[ptr++] = red[redOffset+iend]
 	    SWEEP_EVENTS[ptr++] = idx
 	  }
-	
+
 	  for(var i=blueStart; i<blueEnd; ++i) {
 	    var idx = (blueIndex[i]+1)<<1
 	    var blueOffset = elemSize*i
@@ -8366,11 +8360,11 @@
 	    SWEEP_EVENTS[ptr++] = blue[blueOffset+iend]
 	    SWEEP_EVENTS[ptr++] = idx|1
 	  }
-	
+
 	  //process events from left->right
 	  var n = ptr >>> 1
 	  isort(SWEEP_EVENTS, n)
-	  
+
 	  var redActive    = 0
 	  var blueActive   = 0
 	  var commonActive = 0
@@ -8381,11 +8375,11 @@
 	      color = 2
 	      i += 1
 	    }
-	    
+
 	    if(e < 0) {
 	      //Create event
 	      var id = -(e>>1) - 1
-	
+
 	      //Intersect with common
 	      for(var j=0; j<commonActive; ++j) {
 	        var retval = visit(COMMON_SWEEP_QUEUE[j], id)
@@ -8393,7 +8387,7 @@
 	          return retval
 	        }
 	      }
-	
+
 	      if(color !== 0) {
 	        //Intersect with red
 	        for(var j=0; j<redActive; ++j) {
@@ -8403,7 +8397,7 @@
 	          }
 	        }
 	      }
-	
+
 	      if(color !== 1) {
 	        //Intersect with blue
 	        for(var j=0; j<blueActive; ++j) {
@@ -8413,7 +8407,7 @@
 	          }
 	        }
 	      }
-	
+
 	      if(color === 0) {
 	        //Red
 	        sqPush(RED_SWEEP_QUEUE, RED_SWEEP_INDEX, redActive++, id)
@@ -8440,7 +8434,7 @@
 	    }
 	  }
 	}
-	
+
 	//Sweep and prune/scanline algorithm:
 	//  Scan along axis, detect intersections
 	//  Brute force all boxes along axis
@@ -8448,12 +8442,12 @@
 	  d, axis, visit, flip,
 	  redStart,  redEnd, red, redIndex,
 	  blueStart, blueEnd, blue, blueIndex) {
-	  
+
 	  var ptr      = 0
 	  var elemSize = 2*d
 	  var istart   = axis
 	  var iend     = axis+d
-	
+
 	  var redShift  = 1
 	  var blueShift = 1
 	  if(flip) {
@@ -8461,7 +8455,7 @@
 	  } else {
 	    redShift  = BLUE_FLAG
 	  }
-	
+
 	  for(var i=redStart; i<redEnd; ++i) {
 	    var idx = i + redShift
 	    var redOffset = elemSize*i
@@ -8476,11 +8470,11 @@
 	    SWEEP_EVENTS[ptr++] = blue[blueOffset+istart]
 	    SWEEP_EVENTS[ptr++] = -idx
 	  }
-	
+
 	  //process events from left->right
 	  var n = ptr >>> 1
 	  isort(SWEEP_EVENTS, n)
-	  
+
 	  var redActive    = 0
 	  for(var i=0; i<n; ++i) {
 	    var e = SWEEP_EVENTS[2*i+1]|0
@@ -8489,7 +8483,7 @@
 	      var isRed = false
 	      if(idx >= BLUE_FLAG) {
 	        isRed = !flip
-	        idx -= BLUE_FLAG 
+	        idx -= BLUE_FLAG
 	      } else {
 	        isRed = !!flip
 	        idx -= 1
@@ -8499,27 +8493,27 @@
 	      } else {
 	        var blueId  = blueIndex[idx]
 	        var bluePtr = elemSize * idx
-	        
+
 	        var b0 = blue[bluePtr+axis+1]
 	        var b1 = blue[bluePtr+axis+1+d]
-	
+
 	red_loop:
 	        for(var j=0; j<redActive; ++j) {
 	          var oidx   = RED_SWEEP_QUEUE[j]
 	          var redPtr = elemSize * oidx
-	
-	          if(b1 < red[redPtr+axis+1] || 
+
+	          if(b1 < red[redPtr+axis+1] ||
 	             red[redPtr+axis+1+d] < b0) {
 	            continue
 	          }
-	
+
 	          for(var k=axis+2; k<d; ++k) {
-	            if(blue[bluePtr + k + d] < red[redPtr + k] || 
+	            if(blue[bluePtr + k + d] < red[redPtr + k] ||
 	               red[redPtr + k + d] < blue[bluePtr + k]) {
 	              continue red_loop
 	            }
 	          }
-	
+
 	          var redId  = redIndex[oidx]
 	          var retval
 	          if(flip) {
@@ -8528,7 +8522,7 @@
 	            retval = visit(redId, blueId)
 	          }
 	          if(retval !== void 0) {
-	            return retval 
+	            return retval
 	          }
 	        }
 	      }
@@ -8537,17 +8531,17 @@
 	    }
 	  }
 	}
-	
+
 	function scanComplete(
 	  d, axis, visit,
 	  redStart,  redEnd, red, redIndex,
 	  blueStart, blueEnd, blue, blueIndex) {
-	
+
 	  var ptr      = 0
 	  var elemSize = 2*d
 	  var istart   = axis
 	  var iend     = axis+d
-	
+
 	  for(var i=redStart; i<redEnd; ++i) {
 	    var idx = i + BLUE_FLAG
 	    var redOffset = elemSize*i
@@ -8562,11 +8556,11 @@
 	    SWEEP_EVENTS[ptr++] = blue[blueOffset+istart]
 	    SWEEP_EVENTS[ptr++] = -idx
 	  }
-	
+
 	  //process events from left->right
 	  var n = ptr >>> 1
 	  isort(SWEEP_EVENTS, n)
-	  
+
 	  var redActive    = 0
 	  for(var i=0; i<n; ++i) {
 	    var e = SWEEP_EVENTS[2*i+1]|0
@@ -8578,34 +8572,34 @@
 	        idx -= 1
 	        var blueId  = blueIndex[idx]
 	        var bluePtr = elemSize * idx
-	
+
 	        var b0 = blue[bluePtr+axis+1]
 	        var b1 = blue[bluePtr+axis+1+d]
-	
+
 	red_loop:
 	        for(var j=0; j<redActive; ++j) {
 	          var oidx   = RED_SWEEP_QUEUE[j]
 	          var redId  = redIndex[oidx]
-	
+
 	          if(redId === blueId) {
 	            break
 	          }
-	
+
 	          var redPtr = elemSize * oidx
-	          if(b1 < red[redPtr+axis+1] || 
+	          if(b1 < red[redPtr+axis+1] ||
 	            red[redPtr+axis+1+d] < b0) {
 	            continue
 	          }
 	          for(var k=axis+2; k<d; ++k) {
-	            if(blue[bluePtr + k + d] < red[redPtr + k] || 
+	            if(blue[bluePtr + k + d] < red[redPtr + k] ||
 	               red[redPtr + k + d]   < blue[bluePtr + k]) {
 	              continue red_loop
 	            }
 	          }
-	
+
 	          var retval = visit(redId, blueId)
 	          if(retval !== void 0) {
-	            return retval 
+	            return retval
 	          }
 	        }
 	      }
@@ -8629,14 +8623,14 @@
 /***/ function(module, exports) {
 
 	'use strict';
-	
+
 	//This code is extracted from ndarray-sort
 	//It is inlined here as a temporary workaround
-	
+
 	module.exports = wrapper;
-	
+
 	var INSERT_SORT_CUTOFF = 32
-	
+
 	function wrapper(data, n0) {
 	  if (n0 <= 4*INSERT_SORT_CUTOFF) {
 	    insertionSort(0, n0 - 1, data);
@@ -8644,7 +8638,7 @@
 	    quickSort(0, n0 - 1, data);
 	  }
 	}
-	
+
 	function insertionSort(left, right, data) {
 	  var ptr = 2*(left+1)
 	  for(var i=left+1; i<=right; ++i) {
@@ -8668,7 +8662,7 @@
 	    data[jptr+1] = b
 	  }
 	}
-	
+
 	function swap(i, j, data) {
 	  i *= 2
 	  j *= 2
@@ -8679,14 +8673,14 @@
 	  data[j] = x
 	  data[j+1] = y
 	}
-	
+
 	function move(i, j, data) {
 	  i *= 2
 	  j *= 2
 	  data[i] = data[j]
 	  data[i+1] = data[j+1]
 	}
-	
+
 	function rotate(i, j, k, data) {
 	  i *= 2
 	  j *= 2
@@ -8700,7 +8694,7 @@
 	  data[k] = x
 	  data[k+1] = y
 	}
-	
+
 	function shufflePivot(i, j, px, py, data) {
 	  i *= 2
 	  j *= 2
@@ -8709,7 +8703,7 @@
 	  data[i+1] = data[j+1]
 	  data[j+1] = py
 	}
-	
+
 	function compare(i, j, data) {
 	  i *= 2
 	  j *= 2
@@ -8722,7 +8716,7 @@
 	  }
 	  return true
 	}
-	
+
 	function comparePivot(i, y, b, data) {
 	  i *= 2
 	  var x = data[i]
@@ -8733,21 +8727,21 @@
 	  }
 	  return false
 	}
-	
+
 	function quickSort(left, right, data) {
-	  var sixth = (right - left + 1) / 6 | 0, 
-	      index1 = left + sixth, 
-	      index5 = right - sixth, 
-	      index3 = left + right >> 1, 
-	      index2 = index3 - sixth, 
-	      index4 = index3 + sixth, 
-	      el1 = index1, 
-	      el2 = index2, 
-	      el3 = index3, 
-	      el4 = index4, 
-	      el5 = index5, 
-	      less = left + 1, 
-	      great = right - 1, 
+	  var sixth = (right - left + 1) / 6 | 0,
+	      index1 = left + sixth,
+	      index5 = right - sixth,
+	      index3 = left + right >> 1,
+	      index2 = index3 - sixth,
+	      index4 = index3 + sixth,
+	      el1 = index1,
+	      el2 = index2,
+	      el3 = index3,
+	      el4 = index4,
+	      el5 = index5,
+	      less = left + 1,
+	      great = right - 1,
 	      tmp = 0
 	  if(compare(el1, el2, data)) {
 	    tmp = el1
@@ -8794,12 +8788,12 @@
 	    el4 = el5
 	    el5 = tmp
 	  }
-	
+
 	  var pivot1X = data[2*el2]
 	  var pivot1Y = data[2*el2+1]
 	  var pivot2X = data[2*el4]
 	  var pivot2Y = data[2*el4+1]
-	
+
 	  var ptr0 = 2 * el1;
 	  var ptr2 = 2 * el3;
 	  var ptr4 = 2 * el5;
@@ -8814,7 +8808,7 @@
 	    data[ptr6+i1] = y;
 	    data[ptr7+i1] = z;
 	  }
-	
+
 	  move(index2, left, data)
 	  move(index4, right, data)
 	  for (var k = less; k <= great; ++k) {
@@ -8870,9 +8864,9 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
-	
+
 	module.exports = boxIntersectIter
-	
+
 	var pool = __webpack_require__(86)
 	var bits = __webpack_require__(91)
 	var bruteForce = __webpack_require__(96)
@@ -8881,46 +8875,46 @@
 	var sweep = __webpack_require__(93)
 	var findMedian = __webpack_require__(97)
 	var genPartition = __webpack_require__(98)
-	
+
 	//Twiddle parameters
 	var BRUTE_FORCE_CUTOFF    = 128       //Cut off for brute force search
 	var SCAN_CUTOFF           = (1<<22)   //Cut off for two way scan
-	var SCAN_COMPLETE_CUTOFF  = (1<<22)  
-	
+	var SCAN_COMPLETE_CUTOFF  = (1<<22)
+
 	//Partition functions
 	var partitionInteriorContainsInterval = genPartition(
-	  '!(lo>=p0)&&!(p1>=hi)', 
+	  '!(lo>=p0)&&!(p1>=hi)',
 	  ['p0', 'p1'])
-	
+
 	var partitionStartEqual = genPartition(
 	  'lo===p0',
 	  ['p0'])
-	
+
 	var partitionStartLessThan = genPartition(
 	  'lo<p0',
 	  ['p0'])
-	
+
 	var partitionEndLessThanEqual = genPartition(
 	  'hi<=p0',
 	  ['p0'])
-	
+
 	var partitionContainsPoint = genPartition(
 	  'lo<=p0&&p0<=hi',
 	  ['p0'])
-	
+
 	var partitionContainsPointProper = genPartition(
 	  'lo<p0&&p0<=hi',
 	  ['p0'])
-	
+
 	//Frame size for iterative loop
 	var IFRAME_SIZE = 6
 	var DFRAME_SIZE = 2
-	
+
 	//Data for box statck
 	var INIT_CAPACITY = 1024
 	var BOX_ISTACK  = pool.mallocInt32(INIT_CAPACITY)
 	var BOX_DSTACK  = pool.mallocDouble(INIT_CAPACITY)
-	
+
 	//Initialize iterative loop queue
 	function iterInit(d, count) {
 	  var levels = (8 * bits.log2(count+1) * (d+1))|0
@@ -8935,15 +8929,15 @@
 	    BOX_DSTACK = pool.mallocDouble(maxDoubles)
 	  }
 	}
-	
+
 	//Append item to queue
 	function iterPush(ptr,
-	  axis, 
-	  redStart, redEnd, 
-	  blueStart, blueEnd, 
-	  state, 
+	  axis,
+	  redStart, redEnd,
+	  blueStart, blueEnd,
+	  state,
 	  lo, hi) {
-	
+
 	  var iptr = IFRAME_SIZE * ptr
 	  BOX_ISTACK[iptr]   = axis
 	  BOX_ISTACK[iptr+1] = redStart
@@ -8951,22 +8945,22 @@
 	  BOX_ISTACK[iptr+3] = blueStart
 	  BOX_ISTACK[iptr+4] = blueEnd
 	  BOX_ISTACK[iptr+5] = state
-	
+
 	  var dptr = DFRAME_SIZE * ptr
 	  BOX_DSTACK[dptr]   = lo
 	  BOX_DSTACK[dptr+1] = hi
 	}
-	
+
 	//Special case:  Intersect single point with list of intervals
 	function onePointPartial(
 	  d, axis, visit, flip,
 	  redStart, redEnd, red, redIndex,
 	  blueOffset, blue, blueId) {
-	
+
 	  var elemSize = 2 * d
 	  var bluePtr  = blueOffset * elemSize
 	  var blueX    = blue[bluePtr + axis]
-	
+
 	red_loop:
 	  for(var i=redStart, redPtr=redStart*elemSize; i<redEnd; ++i, redPtr+=elemSize) {
 	    var r0 = red[redPtr+axis]
@@ -8998,17 +8992,17 @@
 	    }
 	  }
 	}
-	
+
 	//Special case:  Intersect one point with list of intervals
 	function onePointFull(
 	  d, axis, visit,
 	  redStart, redEnd, red, redIndex,
 	  blueOffset, blue, blueId) {
-	
+
 	  var elemSize = 2 * d
 	  var bluePtr  = blueOffset * elemSize
 	  var blueX    = blue[bluePtr + axis]
-	
+
 	red_loop:
 	  for(var i=redStart, redPtr=redStart*elemSize; i<redEnd; ++i, redPtr+=elemSize) {
 	    var redId = redIndex[i]
@@ -9035,38 +9029,38 @@
 	    }
 	  }
 	}
-	
+
 	//The main box intersection routine
 	function boxIntersectIter(
 	  d, visit, initFull,
 	  xSize, xBoxes, xIndex,
 	  ySize, yBoxes, yIndex) {
-	
+
 	  //Reserve memory for stack
 	  iterInit(d, xSize + ySize)
-	
+
 	  var top  = 0
 	  var elemSize = 2 * d
 	  var retval
-	
+
 	  iterPush(top++,
 	      0,
 	      0, xSize,
 	      0, ySize,
-	      initFull ? 16 : 0, 
+	      initFull ? 16 : 0,
 	      -Infinity, Infinity)
 	  if(!initFull) {
 	    iterPush(top++,
 	      0,
 	      0, ySize,
 	      0, xSize,
-	      1, 
+	      1,
 	      -Infinity, Infinity)
 	  }
-	
+
 	  while(top > 0) {
 	    top  -= 1
-	
+
 	    var iptr = top * IFRAME_SIZE
 	    var axis      = BOX_ISTACK[iptr]
 	    var redStart  = BOX_ISTACK[iptr+1]
@@ -9074,15 +9068,15 @@
 	    var blueStart = BOX_ISTACK[iptr+3]
 	    var blueEnd   = BOX_ISTACK[iptr+4]
 	    var state     = BOX_ISTACK[iptr+5]
-	
+
 	    var dptr = top * DFRAME_SIZE
 	    var lo        = BOX_DSTACK[dptr]
 	    var hi        = BOX_DSTACK[dptr+1]
-	
+
 	    //Unpack state info
 	    var flip      = (state & 1)
 	    var full      = !!(state & 16)
-	
+
 	    //Unpack indices
 	    var red       = xBoxes
 	    var redIndex  = xIndex
@@ -9094,7 +9088,7 @@
 	      blue        = xBoxes
 	      blueIndex   = xIndex
 	    }
-	
+
 	    if(state & 2) {
 	      redEnd = partitionStartLessThan(
 	        d, axis,
@@ -9113,14 +9107,14 @@
 	        continue
 	      }
 	    }
-	    
+
 	    var redCount  = redEnd  - redStart
 	    var blueCount = blueEnd - blueStart
-	
+
 	    if(full) {
 	      if(d * redCount * (redCount + blueCount) < SCAN_COMPLETE_CUTOFF) {
 	        retval = sweep.scanComplete(
-	          d, axis, visit, 
+	          d, axis, visit,
 	          redStart, redEnd, red, redIndex,
 	          blueStart, blueEnd, blue, blueIndex)
 	        if(retval !== void 0) {
@@ -9142,7 +9136,7 @@
 	      } else if(d * redCount * blueCount < SCAN_CUTOFF) {
 	        //If input medium sized, then use sweep and prune
 	        retval = sweep.scanBipartite(
-	          d, axis, visit, flip, 
+	          d, axis, visit, flip,
 	          redStart, redEnd, red, redIndex,
 	          blueStart, blueEnd, blue, blueIndex)
 	        if(retval !== void 0) {
@@ -9151,16 +9145,16 @@
 	        continue
 	      }
 	    }
-	    
+
 	    //First, find all red intervals whose interior contains (lo,hi)
 	    var red0 = partitionInteriorContainsInterval(
-	      d, axis, 
+	      d, axis,
 	      redStart, redEnd, red, redIndex,
 	      lo, hi)
-	
+
 	    //Lower dimensional case
 	    if(redStart < red0) {
-	
+
 	      if(d * (red0 - redStart) < BRUTE_FORCE_CUTOFF) {
 	        //Special case for small inputs: use brute force
 	        retval = bruteForceFull(
@@ -9200,10 +9194,10 @@
 	          -Infinity, Infinity)
 	      }
 	    }
-	
+
 	    //Divide and conquer phase
 	    if(red0 < redEnd) {
-	
+
 	      //Cut blue into 3 parts:
 	      //
 	      //  Points < mid point
@@ -9211,14 +9205,14 @@
 	      //  Points > mid point
 	      //
 	      var blue0 = findMedian(
-	        d, axis, 
+	        d, axis,
 	        blueStart, blueEnd, blue, blueIndex)
 	      var mid = blue[elemSize * blue0 + axis]
 	      var blue1 = partitionStartEqual(
 	        d, axis,
 	        blue0, blueEnd, blue, blueIndex,
 	        mid)
-	
+
 	      //Right case
 	      if(blue1 < blueEnd) {
 	        iterPush(top++,
@@ -9228,7 +9222,7 @@
 	          (flip|4) + (full ? 16 : 0),
 	          mid, hi)
 	      }
-	
+
 	      //Left case
 	      if(blueStart < blue0) {
 	        iterPush(top++,
@@ -9238,7 +9232,7 @@
 	          (flip|2) + (full ? 16 : 0),
 	          lo, mid)
 	      }
-	
+
 	      //Center case (the hard part)
 	      if(blue0 + 1 === blue1) {
 	        //Optimization: Range with exactly 1 point, use a brute force scan
@@ -9281,7 +9275,7 @@
 	                  return retval
 	                }
 	              }
-	
+
 	              //Normal sweep intersection:
 	              //  [redX, red1] with [blue0, blue1]
 	              if(redX < red1) {
@@ -9369,30 +9363,30 @@
 /***/ function(module, exports) {
 
 	'use strict'
-	
+
 	var DIMENSION   = 'd'
 	var AXIS        = 'ax'
 	var VISIT       = 'vv'
 	var FLIP        = 'fp'
-	
+
 	var ELEM_SIZE   = 'es'
-	
+
 	var RED_START   = 'rs'
 	var RED_END     = 're'
 	var RED_BOXES   = 'rb'
 	var RED_INDEX   = 'ri'
 	var RED_PTR     = 'rp'
-	
+
 	var BLUE_START  = 'bs'
 	var BLUE_END    = 'be'
 	var BLUE_BOXES  = 'bb'
 	var BLUE_INDEX  = 'bi'
 	var BLUE_PTR    = 'bp'
-	
+
 	var RETVAL      = 'rv'
-	
+
 	var INNER_LABEL = 'Q'
-	
+
 	var ARGS = [
 	  DIMENSION,
 	  AXIS,
@@ -9406,38 +9400,38 @@
 	  BLUE_BOXES,
 	  BLUE_INDEX
 	]
-	
+
 	function generateBruteForce(redMajor, flip, full) {
-	  var funcName = 'bruteForce' + 
-	    (redMajor ? 'Red' : 'Blue') + 
+	  var funcName = 'bruteForce' +
+	    (redMajor ? 'Red' : 'Blue') +
 	    (flip ? 'Flip' : '') +
 	    (full ? 'Full' : '')
-	
+
 	  var code = ['function ', funcName, '(', ARGS.join(), '){',
 	    'var ', ELEM_SIZE, '=2*', DIMENSION, ';']
-	
-	  var redLoop = 
+
+	  var redLoop =
 	    'for(var i=' + RED_START + ',' + RED_PTR + '=' + ELEM_SIZE + '*' + RED_START + ';' +
 	        'i<' + RED_END +';' +
 	        '++i,' + RED_PTR + '+=' + ELEM_SIZE + '){' +
 	        'var x0=' + RED_BOXES + '[' + AXIS + '+' + RED_PTR + '],' +
 	            'x1=' + RED_BOXES + '[' + AXIS + '+' + RED_PTR + '+' + DIMENSION + '],' +
 	            'xi=' + RED_INDEX + '[i];'
-	
-	  var blueLoop = 
+
+	  var blueLoop =
 	    'for(var j=' + BLUE_START + ',' + BLUE_PTR + '=' + ELEM_SIZE + '*' + BLUE_START + ';' +
 	        'j<' + BLUE_END + ';' +
 	        '++j,' + BLUE_PTR + '+=' + ELEM_SIZE + '){' +
 	        'var y0=' + BLUE_BOXES + '[' + AXIS + '+' + BLUE_PTR + '],' +
 	            (full ? 'y1=' + BLUE_BOXES + '[' + AXIS + '+' + BLUE_PTR + '+' + DIMENSION + '],' : '') +
 	            'yi=' + BLUE_INDEX + '[j];'
-	
+
 	  if(redMajor) {
 	    code.push(redLoop, INNER_LABEL, ':', blueLoop)
 	  } else {
 	    code.push(blueLoop, INNER_LABEL, ':', redLoop)
 	  }
-	
+
 	  if(full) {
 	    code.push('if(y1<x0||x1<y0)continue;')
 	  } else if(flip) {
@@ -9445,7 +9439,7 @@
 	  } else {
 	    code.push('if(y0<x0||x1<y0)continue;')
 	  }
-	
+
 	  code.push('for(var k='+AXIS+'+1;k<'+DIMENSION+';++k){'+
 	    'var r0='+RED_BOXES+'[k+'+RED_PTR+'],'+
 	        'r1='+RED_BOXES+'[k+'+DIMENSION+'+'+RED_PTR+'],'+
@@ -9453,21 +9447,21 @@
 	        'b1='+BLUE_BOXES+'[k+'+DIMENSION+'+'+BLUE_PTR+'];'+
 	      'if(r1<b0||b1<r0)continue ' + INNER_LABEL + ';}' +
 	      'var ' + RETVAL + '=' + VISIT + '(')
-	
+
 	  if(flip) {
 	    code.push('yi,xi')
 	  } else {
 	    code.push('xi,yi')
 	  }
-	
+
 	  code.push(');if(' + RETVAL + '!==void 0)return ' + RETVAL + ';}}}')
-	
+
 	  return {
-	    name: funcName, 
+	    name: funcName,
 	    code: code.join('')
 	  }
 	}
-	
+
 	function bruteForcePlanner(full) {
 	  var funcName = 'bruteForce' + (full ? 'Full' : 'Partial')
 	  var prefix = []
@@ -9475,18 +9469,18 @@
 	  if(!full) {
 	    fargs.splice(3, 0, FLIP)
 	  }
-	
+
 	  var code = ['function ' + funcName + '(' + fargs.join() + '){']
-	
+
 	  function invoke(redMajor, flip) {
 	    var res = generateBruteForce(redMajor, flip, full)
 	    prefix.push(res.code)
 	    code.push('return ' + res.name + '(' + ARGS.join() + ');')
 	  }
-	
+
 	  code.push('if(' + RED_END + '-' + RED_START + '>' +
 	                    BLUE_END + '-' + BLUE_START + '){')
-	
+
 	  if(full) {
 	    invoke(true, false)
 	    code.push('}else{')
@@ -9503,13 +9497,13 @@
 	    code.push('}')
 	  }
 	  code.push('}}return ' + funcName)
-	
+
 	  var codeStr = prefix.join('') + code.join('')
 	  var proc = new Function(codeStr)
 	  return proc()
 	}
-	
-	
+
+
 	exports.partial = bruteForcePlanner(false)
 	exports.full    = bruteForcePlanner(true)
 
@@ -9518,23 +9512,23 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
-	
+
 	module.exports = findMedian
-	
+
 	var genPartition = __webpack_require__(98)
-	
+
 	var partitionStartLessThan = genPartition('lo<p0', ['p0'])
-	
+
 	var PARTITION_THRESHOLD = 8   //Cut off for using insertion sort in findMedian
-	
+
 	//Base case for median finding:  Use insertion sort
 	function insertionSort(d, axis, start, end, boxes, ids) {
 	  var elemSize = 2 * d
 	  var boxPtr = elemSize * (start+1) + axis
 	  for(var i=start+1; i<end; ++i, boxPtr+=elemSize) {
 	    var x = boxes[boxPtr]
-	    for(var j=i, ptr=elemSize*(i-1); 
-	        j>start && boxes[ptr+axis] > x; 
+	    for(var j=i, ptr=elemSize*(i-1);
+	        j>start && boxes[ptr+axis] > x;
 	        --j, ptr-=elemSize) {
 	      //Swap
 	      var aPtr = ptr
@@ -9550,28 +9544,28 @@
 	    }
 	  }
 	}
-	
+
 	//Find median using quick select algorithm
 	//  takes O(n) time with high probability
 	function findMedian(d, axis, start, end, boxes, ids) {
 	  if(end <= start+1) {
 	    return start
 	  }
-	
+
 	  var lo       = start
 	  var hi       = end
 	  var mid      = ((end + start) >>> 1)
 	  var elemSize = 2*d
 	  var pivot    = mid
 	  var value    = boxes[elemSize*mid+axis]
-	  
+
 	  while(lo < hi) {
 	    if(hi - lo < PARTITION_THRESHOLD) {
 	      insertionSort(d, axis, lo, hi, boxes, ids)
 	      value = boxes[elemSize*mid+axis]
 	      break
 	    }
-	    
+
 	    //Select pivot using median-of-3
 	    var count  = hi - lo
 	    var pivot0 = (Math.random()*count+lo)|0
@@ -9603,7 +9597,7 @@
 	        value = value2
 	      }
 	    }
-	
+
 	    //Swap pivot to end of array
 	    var aPtr = elemSize * (hi-1)
 	    var bPtr = elemSize * pivot
@@ -9615,13 +9609,13 @@
 	    var y = ids[hi-1]
 	    ids[hi-1] = ids[pivot]
 	    ids[pivot] = y
-	
+
 	    //Partition using pivot
 	    pivot = partitionStartLessThan(
-	      d, axis, 
+	      d, axis,
 	      lo, hi-1, boxes, ids,
 	      value)
-	
+
 	    //Swap pivot back
 	    var aPtr = elemSize * (hi-1)
 	    var bPtr = elemSize * pivot
@@ -9633,11 +9627,11 @@
 	    var y = ids[hi-1]
 	    ids[hi-1] = ids[pivot]
 	    ids[pivot] = y
-	
+
 	    //Swap pivot to last pivot
 	    if(mid < pivot) {
 	      hi = pivot-1
-	      while(lo < hi && 
+	      while(lo < hi &&
 	        boxes[elemSize*(hi-1)+axis] === value) {
 	        hi -= 1
 	      }
@@ -9652,10 +9646,10 @@
 	      break
 	    }
 	  }
-	
+
 	  //Make sure pivot is at start
 	  return partitionStartLessThan(
-	    d, axis, 
+	    d, axis,
 	    start, mid, boxes, ids,
 	    boxes[elemSize*mid+axis])
 	}
@@ -9665,11 +9659,11 @@
 /***/ function(module, exports) {
 
 	'use strict'
-	
+
 	module.exports = genPartition
-	
+
 	var code = 'for(var j=2*a,k=j*c,l=k,m=c,n=b,o=a+b,p=c;d>p;++p,k+=j){var _;if($)if(m===p)m+=1,l+=j;else{for(var s=0;j>s;++s){var t=e[k+s];e[k+s]=e[l],e[l++]=t}var u=f[p];f[p]=f[m],f[m++]=u}}return m'
-	
+
 	function genPartition(predicate, args) {
 	  var fargs ='abcdef'.split('').concat(args)
 	  var reads = []
@@ -9694,12 +9688,12 @@
 	  ecs.addEach(function constrainTocontrainPosition(entity) {
 	    var position = game.entities.getComponent(entity, "position");
 	    var size = game.entities.getComponent(entity, "size");
-	
+
 	    var constrainPosition = game.entities.getComponent(entity, "constrainPosition");
 	    var other = constrainPosition.id;
 	    var otherPosition = game.entities.getComponent(other, "position");
 	    var otherSize = game.entities.getComponent(other, "size");
-	
+
 	    if (position.x < otherPosition.x) {
 	      position.x = otherPosition.x;
 	    }
@@ -9753,7 +9747,7 @@
 /***/ function(module, exports) {
 
 	"use strict";
-	
+
 	module.exports = function(ecs, game) { // eslint-disable-line no-unused-vars
 	  ecs.addEach(function(entity, elapsed) { // eslint-disable-line no-unused-vars
 	    var position = game.entities.getComponent(entity, "position");
@@ -9770,40 +9764,40 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var distanceSquared = __webpack_require__(104).distanceSquared;
-	
+
 	module.exports = function(ecs, game) {
 	  game.entities.registerSearch("followParent", ["position", "size", "follow"]);
 	  ecs.addEach(function followParent(entity) {
 	    var position = game.entities.getComponent(entity, "position");
 	    var follow = game.entities.getComponent(entity, "follow");
 	    var size = game.entities.getComponent(entity, "size");
-	
+
 	    var x1 = position.x + (size.width / 2);
 	    var y1 = position.y + (size.height / 2);
-	
+
 	    var parent = follow.id;
 	    if (game.entities.getComponent(parent, "id") === undefined) {
 	      return;
 	    }
 	    var parentPosition = game.entities.getComponent(parent, "position");
 	    var parentSize = game.entities.getComponent(parent, "size");
-	
+
 	    var x2 = parentPosition.x + (parentSize.width / 2);
 	    var y2 = parentPosition.y + (parentSize.height / 2);
-	
+
 	    var angle = Math.atan2(y2 - y1, x2 - x1);
 	    var rotation = game.entities.getComponent(entity, "rotation");
 	    if (rotation !== undefined) {
 	      rotation.angle = angle - (Math.PI / 2);
 	    }
-	
+
 	    var distSquared = distanceSquared(x1, y1, x2, y2);
 	    if (distSquared < follow.distance * follow.distance) {
 	      return;
 	    }
-	
+
 	    var toMove = Math.sqrt(distSquared) - follow.distance;
-	
+
 	    position.x += toMove * Math.cos(angle);
 	    position.y += toMove * Math.sin(angle);
 	  }, "followParent");
@@ -9827,15 +9821,15 @@
 	  game.entities.registerSearch("matchAspectRatioSearch", ["matchAspectRatio", "size"]);
 	  ecs.addEach(function matchCanvasSize(entity) {
 	    var size = game.entities.getComponent(entity, "size");
-	
+
 	    var match = game.entities.getComponent(entity, "matchAspectRatio").id;
 	    var matchSize = game.entities.getComponent(match, "size");
 	    if (matchSize === undefined) {
 	      return;
 	    }
-	
+
 	    var matchAspectRatio = matchSize.width / matchSize.height;
-	
+
 	    var currentAspectRatio = size.width / size.height;
 	    if (currentAspectRatio > matchAspectRatio) {
 	      size.height = Math.floor(size.width / matchAspectRatio);
@@ -9868,9 +9862,9 @@
 	  ecs.addEach(function matchCenterX(entity) {
 	    var position = game.entities.getComponent(entity, "position");
 	    var size = game.entities.getComponent(entity, "size");
-	
+
 	    var matchCenter = game.entities.getComponent(entity, "matchCenter");
-	
+
 	    var idX = matchCenter.x;
 	    if (idX === undefined) {
 	      idX = matchCenter.id;
@@ -9878,7 +9872,7 @@
 	    if (idX !== undefined) {
 	      verifyTarget(game, idX, adjustX, position, size);
 	    }
-	
+
 	    var idY = matchCenter.y;
 	    if (idY === undefined) {
 	      idY = matchCenter.id;
@@ -9888,7 +9882,7 @@
 	    }
 	  }, "matchCenterXSearch");
 	};
-	
+
 	function verifyTarget(game, target, fn, position, size) {
 	  var matchPosition = game.entities.getComponent(target, "position");
 	  if (matchPosition === undefined) {
@@ -9898,14 +9892,14 @@
 	  if (matchSize === undefined) {
 	    return;
 	  }
-	
+
 	  fn(position, size, matchPosition, matchSize);
 	}
-	
+
 	function adjustX(position, size, matchPosition, matchSize) {
 	  position.x = matchPosition.x + (matchSize.width / 2) - (size.width / 2);
 	}
-	
+
 	function adjustY(position, size, matchPosition, matchSize) {
 	  position.y = matchPosition.y + (matchSize.height / 2) - (size.height / 2);
 	}
@@ -9919,12 +9913,12 @@
 	  game.entities.registerSearch("matchParent", ["position", "match"]);
 	  ecs.addEach(function matchParent(entity) {
 	    var match = game.entities.getComponent(entity, "match");
-	
+
 	    var parentPosition = game.entities.getComponent(match.id, "position");
 	    if (parentPosition === undefined) {
 	      return;
 	    }
-	
+
 	    var position = game.entities.addComponent(entity, "position");
 	    position.x = parentPosition.x + match.offsetX;
 	    position.y = parentPosition.y + match.offsetY;
@@ -9943,13 +9937,13 @@
 	    var virtualButton = game.entities.getComponent(entity, "virtualButton");
 	    var position = game.entities.getComponent(entity, "position");
 	    var size = game.entities.getComponent(entity, "size");
-	
+
 	    var camera = game.entities.find("camera")[0];
 	    var cameraPosition = { x: 0, y: 0 };
 	    if (camera !== undefined) {
 	      cameraPosition = game.entities.getComponent(camera, "position");
 	    }
-	
+
 	    for (var i = 0; i < game.inputs.mouse.touches.length; i++) {
 	      var t = game.inputs.mouse.touches[i];
 	      var tx = t.x + cameraPosition.x;
@@ -9990,35 +9984,35 @@
 /* 111 */
 /***/ function(module, exports) {
 
-	
+
 	function percentLoaded(game) {
 	  if (game.images.totalBytes() + game.sounds.assets.totalBytes() === 0) {
 	    return 1;
 	  }
 	  return (game.images.bytesLoaded() + game.sounds.assets.bytesLoaded()) / (game.images.totalBytes() + game.sounds.assets.totalBytes());
 	}
-	
+
 	module.exports = function(ecs, game) { // eslint-disable-line no-unused-vars
 	  ecs.add(function renderLoadingBar(entity, elapsed) { // eslint-disable-line no-unused-vars
 	    game.context.fillStyle = "#000000";
 	    game.context.fillRect(0, 0, game.canvas.width, game.canvas.height);
-	
+
 	    var quarterWidth = Math.floor(game.canvas.width / 4);
 	    var halfWidth = Math.floor(game.canvas.width / 2);
 	    var halfHeight = Math.floor(game.canvas.height / 2);
-	
+
 	    game.context.fillStyle = "#ffffff";
 	    game.context.fillRect(quarterWidth, halfHeight - 15, halfWidth, 30);
-	
+
 	    game.context.fillStyle = "#000000";
 	    game.context.fillRect(quarterWidth + 3, halfHeight - 12, halfWidth - 6, 24);
-	
+
 	    var loaded = percentLoaded(game);
-	
+
 	    game.context.fillStyle = "#ffffff";
 	    var barWidth = (halfWidth - 6) * loaded;
 	    game.context.fillRect(quarterWidth + 3, halfHeight - 12, barWidth, 24);
-	
+
 	    if (loaded === 1) {
 	      game.switchScene("title");
 	    }
@@ -10031,36 +10025,36 @@
 /***/ function(module, exports) {
 
 	"use strict";
-	
+
 	var time = 0;
 	var rowHeight = 60;
 	var waveHeight = 20;
 	var wavePeriod = 4000;
 	var rowsBeforeRepeat = 8;
 	var rowsOffset = Math.PI * 2 / rowsBeforeRepeat;
-	
+
 	module.exports = function(ecs, game) {
 	  ecs.add(function tileBackground(entities, elapsed) {
 	    var camera = 1;
 	    var cameraPosition = game.entities.getComponent(camera, "position");
 	    var cameraSize = game.entities.getComponent(camera, "size");
-	
+
 	    game.context.fillStyle = "#1c325f";
 	    game.context.fillRect(Math.floor(cameraPosition.x), Math.floor(cameraPosition.y), cameraSize.width, cameraSize.height);
-	
+
 	    time += elapsed;
-	
+
 	    var f1 = game.images.get("waves.png");
-	
+
 	    var startX = Math.floor(cameraPosition.x / f1.width) * f1.width;
 	    var startRow = Math.floor(cameraPosition.y / rowHeight);
 	    var startY = (startRow - 1) * rowHeight;
-	
+
 	    for (var y = startY; y <= cameraPosition.y + cameraSize.height; y += rowHeight) {
 	      var even = Math.floor(y / rowHeight) % 2;
 	      var offset = y / rowHeight % rowsBeforeRepeat * rowsOffset;
 	      var waveY = y + Math.sin(time / wavePeriod * Math.PI * 2 + offset) * waveHeight;
-	
+
 	      for (var x = startX; x <= cameraPosition.x + cameraSize.width + f1.width; x += f1.width) {
 	        var waveX = x + Math.sin(time / wavePeriod * 2 * Math.PI * 2 + offset) * waveHeight / 2;
 	        game.context.drawImage(f1, even ? waveX : waveX - 100, waveY, f1.width, f1.height);
@@ -10097,8 +10091,9 @@
 /***/ function(module, exports) {
 
 	"use strict";
-	
+
 	module.exports = function(game) { // eslint-disable-line no-unused-vars
+
 	  game.sounds.play("ambient-sea-track.mp3", {
 	    "loopStart": 0,
 	    "loopEnd": 0
@@ -10111,7 +10106,7 @@
 /***/ function(module, exports) {
 
 	"use strict";
-	
+
 	module.exports = function(game) { // eslint-disable-line no-unused-vars
 	};
 
