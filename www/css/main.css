@@ -1,0 +1,40 @@
+
+#canvas{
+  width: 100%;
+  height: 100%;
+  position:absolute;
+  left:0;
+  top:0;
+  z-index:-1;
+}
+
+.logo{
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.container.info{
+  max-width: 600px;
+  background: white;
+  border-radius: 25px;
+  margin: 15px auto;
+  padding: 20px;
+  border: 10px solid black;
+}
+
+i{
+  margin: 0 10px;
+}
+
+
+.credits{
+  text-align: center;
+  margin: 20px auto;
+  color: white;
+  max-width: 600px;
+}
+
+.credits a{
+  color: white;
+}
