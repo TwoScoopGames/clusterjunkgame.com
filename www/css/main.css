@@ -5,6 +5,7 @@ html {
 }
 *, *:before, *:after {
   box-sizing: inherit;
+  //border: 1px solid red;
 }
 
 #canvas{
@@ -59,4 +60,13 @@ i{
 
 .credits a{
   color: white;
+}
+
+
+
+
+@media (max-width: 600px) {
+  .hide-on-mobile {
+    display: none;
+  }
 }
